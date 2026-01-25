@@ -131,7 +131,7 @@ npm run clean
 
 Each package is independently buildable and has its own:
 - `package.json` - Package configuration and dependencies
-- `vite.config.js` - Vite build configuration
+- `vite.config.ts` - Vite build configuration (TypeScript)
 - `tsconfig.json` - TypeScript configuration
 - `src/` - Source files
 - `README.md` - Documentation

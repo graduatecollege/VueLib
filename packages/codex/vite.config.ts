@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 import dts from 'vite-plugin-dts'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   plugins: [
@@ -16,7 +19,8 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['vue', 'vue-router', 'pinia', '@azure/msal-browser', '@vueuse/core'],
+      // Codex has zero dependencies - no externals needed
+      external: [],
     },
     sourcemap: true,
     emptyOutDir: true,
