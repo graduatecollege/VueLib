@@ -22,13 +22,14 @@ export class Auth {
 
     protected initializing = false;
 
-    static create(msalInstance: PublicClientApplication, msalConfig: MsalConfig) {
-        let auth = shallowReactive(new Auth(msalInstance, msalConfig));
+    static create(apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig) {
+        let auth = shallowReactive(new Auth(apiAccessScope, msalInstance, msalConfig));
         auth.addEventListeners();
         return auth;
     }
 
     private constructor(
+        private apiAccessScope: string,
         private msalInstance: PublicClientApplication,
         public readonly msalConfig: MsalConfig,
     ) {}
@@ -121,9 +122,9 @@ export class Auth {
         return this.loadToken(this.msalConfig.loginRequest);
     }
 
-    loadGcpToken() {
+    loadApiToken() {
         return this.loadToken({
-            scopes: ["api://b1fb9cba-6dc0-4cbf-92d0-719a01ef06b8/GCP.Access"],
+            scopes: [this.apiAccessScope],
         });
     }
 

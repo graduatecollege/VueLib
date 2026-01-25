@@ -54,16 +54,6 @@ export function isErrorResponseObject(error: unknown): error is ErrorResponseObj
  * 
  * @param error - The error to extract a message from
  * @returns User-friendly error message
- *
- * @example
- * ```typescript
- * try {
- *   await api.getUser('123')
- * } catch (error) {
- *   const message = getApiErrorMessage(error)
- *   console.error(message) // "Not found. The requested resource could not be found."
- * }
- * ```
  */
 export function getApiErrorMessage(error: unknown): string {
     console.log("getApiErrorMessage:", error);

@@ -14,19 +14,6 @@ export interface AuthStoreInterface {
 /**
  * Registers the authentication guard with the Vue Router.
  * Routes with `meta.requiresAuth = true` will require authentication.
- * 
- * @param router - Vue Router instance
- * @param getAuthStore - Function that returns the auth store
- * 
- * @example
- * ```typescript
- * import { createRouter } from 'vue-router'
- * import { registerAuthGuard } from '@graduatecollege/vue-auth'
- * import { useAuthStore } from './stores/auth'
- * 
- * const router = createRouter({ ... })
- * registerAuthGuard(router, () => useAuthStore())
- * ```
  */
 export function registerAuthGuard(router: Router, getAuthStore: () => AuthStoreInterface) {
     router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {

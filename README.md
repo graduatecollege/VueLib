@@ -1,96 +1,71 @@
 # Graduate College Vue Packages
 
-This directory contains shared Vue 3 packages extracted from the GCP client codebase. These packages are designed to be reused across Graduate College applications.
+This is an npm workspaces monorepo containing shared Vue 3 packages
+that don't contain components. Components are in the [grad-vue](https://github.com/graduatecollege/grad-vue)
+project.
+
+## Build System
+
+This monorepo uses:
+- **npm workspaces** for package management and dependency hoisting
+- **Vite** for fast, modern building and bundling
+- **TypeScript** for type-safe code
 
 ## Packages
 
-### [@graduatecollege/vue-auth](packages/vue-auth)
-
-Vue 3 authentication utilities with MSAL integration.
-
-**Features:**
-- Auth class for MSAL integration
-- Vue plugin for easy setup
-- Router authentication guard
-- Navigation client for Vue Router integration
-- Utility functions for user display (avatars, colors)
-
-**Dependencies:**
-- `@azure/msal-browser` (peer)
-- `vue` (peer)
-- `vue-router` (peer)
-- `pinia` (peer)
-
-### [@graduatecollege/vue-useful-api](packages/vue-useful-api)
-
-API integration utilities with reactive state management.
-
-**Features:**
-- `usefulApi` - Wraps API calls with reactive loading/error/response states
-- `applyUsefulApi` - Applies usefulApi to all methods of an API class
-- `apiWatch` - Automatically executes API calls when reactive dependencies change
-- Error handling utilities with user-friendly messages
-
-**Dependencies:**
-- `vue` (peer)
-- `@vueuse/core`
-- `fast-equals`
-- `remeda`
-
-### [@graduatecollege/vue-datetime](packages/vue-datetime)
-
-DateTime formatting utilities for Vue 3.
-
-**Features:**
-- Multiple format presets (full, short, with/without time)
-- Timezone-aware formatting (UTC to local)
-- Year-aware formatting (omits current year for brevity)
-- Reactive Vue composables
-- Flexible options for customization
-
-**Dependencies:**
-- `vue` (peer)
-- `dayjs`
-
-### [@graduatecollege/codex](packages/codex)
-
-Domain-specific utilities for Graduate College applications.
-
-**Features:**
-- Term utilities (parse, format, and work with academic terms)
-- Program code utilities (parse and validate degree program codes)
-- Zero dependencies
-- Type-safe TypeScript implementation
-
-**Dependencies:**
-- None (zero dependencies)
+- [`@graduatecollege/vue-auth`](packages/vue-auth)
+- [`@graduatecollege/vue-useful-api`](packages/vue-useful-api)
+- [`@graduatecollege/vue-datetime`](packages/vue-datetime)
+- [`@graduatecollege/codex`](packages/codex)
 
 ## Development
 
-Each package is independently buildable and has its own:
-- `package.json` - Package configuration and dependencies
-- `tsconfig.json` - TypeScript configuration
-- `src/` - Source files
-- `README.md` - Documentation
+### Initial Setup
+
+Install all dependencies for all packages:
+
+```bash
+npm install
+```
+
+### Building Packages
+
+Build all packages at once from the root:
+
+```bash
+npm run build
+```
 
 ### Using Packages Locally
 
 To use these packages locally before publishing:
 
-1. Build the package (see above)
-2. In the consuming project, install from the local path:
+1. Build all packages from the root:
+   ```bash
+   npm run build
+   ```
+
+2. Use `npm link`:
+   
+   ```bash
+   # In the package directory
+   cd packages/vue-auth
+   npm link
+   
+   # In the consuming project
+   npm link @graduatecollege/vue-auth
+   ```
+
+### Publishing Packages
+
+Packages are automatically published to GitHub Packages (https://npm.pkg.github.com) when a new tag starting with "v" is pushed:
 
 ```bash
-npm install ../path/to/vue-auth
+# Create and push a new version tag
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
-Or use `npm link`:
-
-```bash
-# In the package directory
-cd vue-auth
-npm link
-
-# In the consuming project
-npm link @graduatecollege/vue-auth
-```
+The GitHub Actions workflow will:
+1. Build all packages
+2. Publish all 4 packages to the GitHub npm registry

@@ -1,6 +1,6 @@
 {
   "name": "@graduatecollege/vue-datetime",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Vue 3 datetime formatting utilities for Graduate College applications",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,8 +16,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "vue",
@@ -29,14 +30,18 @@
   ],
   "author": "Graduate College, University of Illinois",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graduatecollege/VueLib.git",
+    "directory": "packages/vue-datetime"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "peerDependencies": {
     "vue": "^3.0.0"
   },
   "dependencies": {
     "dayjs": "^1.11.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.0",
-    "vue": "^3.5.0"
   }
 }

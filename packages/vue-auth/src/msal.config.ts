@@ -1,4 +1,4 @@
-import { LogLevel } from '@azure/msal-browser';
+import { LogLevel } from "@azure/msal-browser";
 
 /**
  * Configuration interface for MSAL
@@ -11,7 +11,7 @@ export interface MsalConfig {
         postLogoutRedirectUri: string;
     };
     cache: {
-        cacheLocation: 'localStorage' | 'sessionStorage';
+        cacheLocation: "localStorage" | "sessionStorage";
         storeAuthStateInCookie?: boolean;
     };
     system?: {
@@ -23,6 +23,8 @@ export interface MsalConfig {
     loginRequest: {
         scopes: string[];
     };
+    apiAccessScope: string;
+    allowedHosts: string[];
     graphConfig?: {
         graphMeEndpoint: string;
     };
@@ -32,23 +34,27 @@ export interface MsalConfig {
  * Helper function to create a standard MSAL configuration
  * @param clientId - Azure AD application client ID
  * @param authority - Azure AD authority (tenant ID)
+ * @param apiAccessScope - API access scope for authentication
+ * @param allowedHosts - List of allowed hosts for API access
  * @param additionalScopes - Additional scopes beyond User.Read
  * @returns Complete MSAL configuration
  */
 export function createMsalConfig(
     clientId: string,
     authority: string,
-    additionalScopes: string[] = []
+    apiAccessScope: string,
+    allowedHosts: string[],
+    additionalScopes: string[] = [],
 ): MsalConfig {
     return {
         auth: {
             clientId,
             authority: `https://login.microsoftonline.com/${authority}`,
-            redirectUri: '/',
-            postLogoutRedirectUri: '/'
+            redirectUri: "/",
+            postLogoutRedirectUri: "/",
         },
         cache: {
-            cacheLocation: 'localStorage'
+            cacheLocation: "localStorage",
         },
         system: {
             loggerOptions: {
@@ -73,14 +79,16 @@ export function createMsalConfig(
                             return;
                     }
                 },
-                logLevel: LogLevel.Warning
-            }
+                logLevel: LogLevel.Warning,
+            },
         },
         loginRequest: {
-            scopes: ['User.Read', ...additionalScopes]
+            scopes: ["User.Read", ...additionalScopes],
         },
+        apiAccessScope,
+        allowedHosts,
         graphConfig: {
-            graphMeEndpoint: 'https://graph.microsoft.com/v1.0/me'
-        }
+            graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
+        },
     };
 }
