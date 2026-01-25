@@ -57,39 +57,9 @@ export type UsefulApi<Type> = {
 /**
  * A utility function that wraps an API call in a structure that provides loading, error, and response states.
  *
- * This function is designed to be used with Vue.js 3 and the Composition API. It provides:
- * - Reactive loading/error/response state management
- * - Event hooks (onSuccess, onError, onFinally)
- * - Request deduplication (ignores stale responses)
- * - Direct execution without reactivity
- *
+ * This function is designed to be used with Vue.js 3 and the Composition API.
  * @param fn - The API function to wrap.
- * @returns A function that returns an object containing the execute function and state properties.
- *
- * @example
- * ```typescript
- * const api = {
- *   async getUser(id: string) {
- *     const response = await fetch(`/api/users/${id}`)
- *     return response.json()
- *   }
- * }
- *
- * const getUser = usefulApi(api.getUser.bind(api))
- * const user = getUser()
- *
- * // Execute the API call
- * await user.execute('123')
- *
- * // Access reactive state
- * console.log(user.isLoading.value) // false
- * console.log(user.response.value)  // { id: '123', name: 'John' }
- *
- * // Handle success
- * user.onSuccess((result, args) => {
- *   console.log('User loaded:', result)
- * })
- * ```
+ * @returns An object containing the execute function and state properties.
  */
 export function usefulApi<R, A extends any[], T extends (...args: A) => Promise<R>>(fn: T) {
     return () => {
@@ -176,35 +146,6 @@ export function usefulApi<R, A extends any[], T extends (...args: A) => Promise<
  * 
  * This function automatically wraps all methods of an API class, making them reactive
  * with loading states, error handling, and event hooks.
- * 
- * @param apiInstance - API class instance
- * @returns UsefulApi-wrapped API instance
- *
- * @example
- * ```typescript
- * class UserApi {
- *   async getUser(id: string) {
- *     const response = await fetch(`/api/users/${id}`)
- *     return response.json()
- *   }
- *   
- *   async updateUser(id: string, data: any) {
- *     const response = await fetch(`/api/users/${id}`, {
- *       method: 'PUT',
- *       body: JSON.stringify(data)
- *     })
- *     return response.json()
- *   }
- * }
- *
- * const api = new UserApi()
- * const usefulUserApi = applyUsefulApi(api)
- *
- * // Now all methods are wrapped
- * const getUser = usefulUserApi.getUser()
- * await getUser.execute('123')
- * console.log(getUser.response.value)
- * ```
  */
 export function applyUsefulApi<T extends object>(apiInstance: T): UsefulApi<T> {
     const proto = Object.getPrototypeOf(apiInstance);

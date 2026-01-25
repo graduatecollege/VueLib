@@ -1,6 +1,6 @@
 {
   "name": "@graduatecollege/codex",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Domain-specific utilities for Graduate College applications including terms and programs",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,8 +36,5 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.0"
   }
 }

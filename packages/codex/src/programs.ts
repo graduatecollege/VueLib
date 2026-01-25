@@ -28,9 +28,9 @@ export interface ProgramCodeParts {
  * - Major: 4 digits
  * - Degree: Variable length (remaining characters)
  * 
- * @example "1ULA0501MS" splits into:
- * - Campus: "1U"
- * - College: "LA"
+ * @example "10KS0501MS" splits into:
+ * - Campus: "10"
+ * - College: "KS"
  * - Major: "0501"
  * - Degree: "MS"
  */
@@ -47,20 +47,6 @@ export const programRegex = /(1[a-z0-9])([A-Z]{2})(\d{4})(.*)/i;
  * 
  * @param programCode - The program code to split (e.g., "1ULA0501MS")
  * @returns Object containing the parsed components, or empty object if parsing fails
- * 
- * @example
- * ```typescript
- * splitProgramCode("1ULA0501MS")
- * // {
- * //   programCampus: "1U",
- * //   programCollege: "LA",
- * //   programMajor: "0501",
- * //   programDegree: "MS"
- * // }
- * 
- * splitProgramCode("invalid")
- * // {}
- * ```
  */
 export function splitProgramCode(programCode: string): ProgramCodeParts {
     const match = programRegex.exec(programCode);
@@ -73,81 +59,4 @@ export function splitProgramCode(programCode: string): ProgramCodeParts {
         };
     }
     return {};
-}
-
-/**
- * Format a program code for display.
- * 
- * @param programCode - The program code to format
- * @param options - Formatting options
- * @returns Formatted program code string
- * 
- * @example
- * ```typescript
- * formatProgramCode("1ULA0501MS")
- * // "1U-LA-0501-MS"
- * 
- * formatProgramCode("1ULA0501MS", { separator: " " })
- * // "1U LA 0501 MS"
- * ```
- */
-export function formatProgramCode(
-    programCode: string,
-    options: { separator?: string } = {}
-): string {
-    const { separator = "-" } = options;
-    const parts = splitProgramCode(programCode);
-    
-    if (!parts.programCampus) {
-        return programCode; // Return original if parsing fails
-    }
-    
-    return [
-        parts.programCampus,
-        parts.programCollege,
-        parts.programMajor,
-        parts.programDegree
-    ].filter(Boolean).join(separator);
-}
-
-/**
- * Validate if a program code is valid.
- * 
- * @param programCode - The program code to validate
- * @returns True if the program code matches the expected format
- * 
- * @example
- * ```typescript
- * isValidProgramCode("1ULA0501MS") // true
- * isValidProgramCode("invalid")     // false
- * ```
- */
-export function isValidProgramCode(programCode: string): boolean {
-    return programRegex.test(programCode);
-}
-
-/**
- * Build a program code from its component parts.
- * 
- * @param parts - The component parts of the program code
- * @returns Combined program code string
- * 
- * @example
- * ```typescript
- * buildProgramCode({
- *   programCampus: "1U",
- *   programCollege: "LA",
- *   programMajor: "0501",
- *   programDegree: "MS"
- * })
- * // "1ULA0501MS"
- * ```
- */
-export function buildProgramCode(parts: ProgramCodeParts): string {
-    return [
-        parts.programCampus || "",
-        parts.programCollege || "",
-        parts.programMajor || "",
-        parts.programDegree || ""
-    ].join("");
 }

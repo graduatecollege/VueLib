@@ -1,29 +1,29 @@
 {
-  "name": "@graduatecollege/vue-packages",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Graduate College Vue 3 packages monorepo",
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "npm run build --workspaces --if-present",
-    "dev": "npm run dev --workspaces --if-present",
-    "clean": "npm run clean --workspaces --if-present"
-  },
-  "keywords": [
-    "vue",
-    "vue3",
-    "monorepo",
-    "graduate-college"
-  ],
-  "author": "Graduate College, University of Illinois",
-  "license": "MIT",
-  "devDependencies": {
-    "typescript": "^5.9.0",
-    "vite": "^6.0.5",
-    "vite-plugin-dts": "^4.5.0",
-    "vue": "^3.5.0"
-  }
+    "name": "@graduatecollege/vue-packages",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Graduate College Vue 3 packages monorepo",
+    "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "npm run build --workspaces --if-present",
+        "dev": "npm run dev --workspaces --if-present",
+        "clean": "npm run clean --workspaces --if-present"
+    },
+    "keywords": [
+        "vue",
+        "vue3",
+        "monorepo",
+        "graduate-college"
+    ],
+    "author": "Graduate College, University of Illinois",
+    "devDependencies": {
+        "typescript": "5.8.2",
+        "vite": "^7.3.1",
+        "vite-plugin-dts": "^4.5.4",
+        "vue": "^3.5.27",
+        "prettier": "^3.8.1"
+    }
 }

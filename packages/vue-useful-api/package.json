@@ -1,6 +1,6 @@
 {
   "name": "@graduatecollege/vue-useful-api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Vue 3 API integration utilities with reactive state management for Graduate College applications",
   "type": "module",
   "main": "./dist/index.js",
@@ -45,9 +45,5 @@
     "@vueuse/core": "^14.0.0",
     "fast-equals": "^6.0.0",
     "remeda": "^2.33.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.0",
-    "vue": "^3.5.0"
   }
 }

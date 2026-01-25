@@ -1,57 +1,55 @@
 {
-  "name": "@graduatecollege/vue-auth",
-  "version": "0.1.0",
-  "description": "Vue 3 authentication utilities with MSAL integration for Graduate College applications",
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@graduatecollege/vue-auth",
+    "version": "1.0.0",
+    "description": "Vue 3 authentication utilities with MSAL integration for Graduate College applications",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite build --watch",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [
+        "vue",
+        "vue3",
+        "authentication",
+        "msal",
+        "azure",
+        "graduate-college"
+    ],
+    "author": "Graduate College, University of Illinois",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/graduatecollege/VueLib.git",
+        "directory": "packages/vue-auth"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+    "peerDependencies": {
+        "@azure/msal-browser": "^4.0.0",
+        "pinia": "^3.0.0",
+        "vue": "^3.0.0",
+        "vue-router": "^4.0.0"
+    },
+    "dependencies": {
+        "@vueuse/core": "^14.0.0"
+    },
+    "devDependencies": {
+        "@azure/msal-browser": "^4.27.0",
+        "pinia": "^3.0.4",
+        "vue-router": "^4.6.0"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "clean": "rm -rf dist"
-  },
-  "keywords": [
-    "vue",
-    "vue3",
-    "authentication",
-    "msal",
-    "azure",
-    "graduate-college"
-  ],
-  "author": "Graduate College, University of Illinois",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/graduatecollege/VueLib.git",
-    "directory": "packages/vue-auth"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "peerDependencies": {
-    "@azure/msal-browser": "^4.0.0",
-    "pinia": "^2.0.0 || ^3.0.0",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
-  },
-  "dependencies": {
-    "@vueuse/core": "^14.0.0"
-  },
-  "devDependencies": {
-    "@azure/msal-browser": "^4.27.0",
-    "pinia": "^3.0.4",
-    "typescript": "^5.9.0",
-    "vue": "^3.5.0",
-    "vue-router": "^4.6.0"
-  }
 }

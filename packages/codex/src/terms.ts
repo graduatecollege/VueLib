@@ -114,27 +114,6 @@ export const termRegex = /^1(\d{4})([158])$/;
  * @param code - Term code to parse (e.g., "120241" for Spring 2024)
  * @param returnDefault - If true, returns the current term if parsing fails
  * @returns Parsed Term object or "Unknown" term if parsing fails
- * 
- * @example
- * ```typescript
- * parseTermCode("120241")
- * // {
- * //   year: 2024,
- * //   month: 1,
- * //   name: "Spring",
- * //   gradMonthName: "May",
- * //   code: "120241",
- * //   academicYear: "2023-2024",
- * //   termName: "Spring 2024",
- * //   shortTermName: "SP 24"
- * // }
- * 
- * parseTermCode("invalid")
- * // { year: 0, month: 0, name: "Unknown", ... }
- * 
- * parseTermCode("invalid", true)
- * // Returns current term
- * ```
  */
 export function parseTermCode(code: string, returnDefault = false): Term {
     const match = termRegex.exec(code);
@@ -203,13 +182,6 @@ export function parseTermCode(code: string, returnDefault = false): Term {
  * @param year - Four digit year
  * @param month - Month number (1, 5, or 8)
  * @returns Term code string in format "1YYYYX"
- * 
- * @example
- * ```typescript
- * generateTermCode(2024, 1) // "120241"
- * generateTermCode(2024, 5) // "120245"
- * generateTermCode(2024, 8) // "120248"
- * ```
  */
 export function generateTermCode(year: number, month: number): string {
     return `1${year}${month}`;
@@ -222,14 +194,6 @@ export function generateTermCode(year: number, month: number): string {
  * @param monthInput - Month number (1, 5, 8), term name ("Spring", "Summer", "Fall"), or graduation month ("May", "Aug", "Dec")
  * @returns Complete Term object
  * @throws Error if monthInput is invalid
- * 
- * @example
- * ```typescript
- * createTerm(2024, 1)
- * createTerm(2024, "Spring")
- * createTerm(2024, "May")
- * // All return the same Spring 2024 term
- * ```
  */
 export function createTerm(year: number, monthInput: number | Term["name"] | Term["gradMonthName"]): Term {
     let gradMonthName: Term["gradMonthName"];
@@ -286,17 +250,6 @@ export function createTerm(year: number, monthInput: number | Term["name"] | Ter
  * - October and later: Fall term
  * 
  * @returns Term object for current term
- * 
- * @example
- * ```typescript
- * // If current date is March 15, 2024
- * getCurrentTerm()
- * // Returns Spring 2024 term
- * 
- * // If current date is July 1, 2024
- * getCurrentTerm()
- * // Returns Summer 2024 term
- * ```
  */
 export function getCurrentTerm(): Term {
     const now = new Date();
@@ -316,14 +269,6 @@ export function getCurrentTerm(): Term {
 
 /**
  * Generate a term code that matches the current date.
- * 
- * @returns Term code for current term (e.g., "120241" if it's Spring 2024)
- * 
- * @example
- * ```typescript
- * // If current date is March 15, 2024
- * getCurrentTermCode() // "120241"
- * ```
  */
 export function getCurrentTermCode(): string {
     return getCurrentTerm().code;

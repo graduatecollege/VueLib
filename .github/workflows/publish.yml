@@ -5,61 +5,43 @@ on:
     tags:
       - 'v*'
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   publish:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
-    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: version
+        run: |
+          echo "REPO_FULL=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+          echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> ${GITHUB_ENV}
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY#*/}" >> ${GITHUB_ENV}
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> ${GITHUB_ENV}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@graduatecollege'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
 
-      - name: Build all packages
-        run: npm run build
-
-      - name: Configure npm for GitHub Packages
+      - name: Build package
         run: |
-          echo "@graduatecollege:registry=https://npm.pkg.github.com" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          npm run build
+          npm --workspaces version ${{ env.VERSION }} --no-git-tag-version
 
-      - name: Publish @graduatecollege/codex
-        run: |
-          cd packages/codex
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish @graduatecollege/vue-auth
-        run: |
-          cd packages/vue-auth
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish @graduatecollege/vue-datetime
-        run: |
-          cd packages/vue-datetime
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish @graduatecollege/vue-useful-api
-        run: |
-          cd packages/vue-useful-api
-          npm publish
+      - name: Publish
+        run: npm --workspaces publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
