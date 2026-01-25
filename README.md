@@ -163,7 +163,21 @@ npm link @graduatecollege/vue-auth
 
 ### Publishing Packages
 
-To publish all packages (requires npm access):
+Packages are automatically published to GitHub Packages (https://npm.pkg.github.com) when a new tag starting with "v" is pushed:
+
+```bash
+# Create and push a new version tag
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+The GitHub Actions workflow will:
+1. Build all packages
+2. Publish all 4 packages to the GitHub npm registry
+
+#### Manual Publishing
+
+To manually publish packages (requires npm access):
 
 ```bash
 # Build all packages first

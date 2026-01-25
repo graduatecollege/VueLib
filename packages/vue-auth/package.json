@@ -30,6 +30,14 @@
   ],
   "author": "Graduate College, University of Illinois",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graduatecollege/VueLib.git",
+    "directory": "packages/vue-auth"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "peerDependencies": {
     "@azure/msal-browser": "^4.0.0",
     "pinia": "^2.0.0 || ^3.0.0",

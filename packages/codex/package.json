@@ -29,6 +29,14 @@
   ],
   "author": "Graduate College, University of Illinois",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graduatecollege/VueLib.git",
+    "directory": "packages/codex"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "devDependencies": {
     "typescript": "^5.9.0"
   }
