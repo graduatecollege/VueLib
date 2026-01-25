@@ -4,7 +4,7 @@ This directory contains shared Vue 3 packages extracted from the GCP client code
 
 ## Packages
 
-### [@graduatecollege/vue-auth](./vue-auth)
+### [@graduatecollege/vue-auth](packages/vue-auth)
 
 Vue 3 authentication utilities with MSAL integration.
 
@@ -21,7 +21,7 @@ Vue 3 authentication utilities with MSAL integration.
 - `vue-router` (peer)
 - `pinia` (peer)
 
-### [@graduatecollege/vue-useful-api](./vue-useful-api)
+### [@graduatecollege/vue-useful-api](packages/vue-useful-api)
 
 API integration utilities with reactive state management.
 
@@ -37,7 +37,7 @@ API integration utilities with reactive state management.
 - `fast-equals`
 - `remeda`
 
-### [@graduatecollege/vue-datetime](./vue-datetime)
+### [@graduatecollege/vue-datetime](packages/vue-datetime)
 
 DateTime formatting utilities for Vue 3.
 
@@ -52,7 +52,7 @@ DateTime formatting utilities for Vue 3.
 - `vue` (peer)
 - `dayjs`
 
-### [@graduatecollege/codex](./codex)
+### [@graduatecollege/codex](packages/codex)
 
 Domain-specific utilities for Graduate College applications.
 
