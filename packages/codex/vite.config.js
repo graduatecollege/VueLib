@@ -16,6 +16,7 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
+      // Codex has zero dependencies - no externals needed
       external: [],
     },
     sourcemap: true,
