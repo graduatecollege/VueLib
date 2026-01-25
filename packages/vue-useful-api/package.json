@@ -16,8 +16,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "vue",
