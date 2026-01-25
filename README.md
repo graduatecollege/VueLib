@@ -1,6 +1,13 @@
 # Graduate College Vue Packages
 
-This directory contains shared Vue 3 packages extracted from the GCP client codebase. These packages are designed to be reused across Graduate College applications.
+This is an npm workspaces monorepo containing shared Vue 3 packages extracted from the GCP client codebase. These packages are designed to be reused across Graduate College applications.
+
+## Build System
+
+This monorepo uses:
+- **npm workspaces** for package management and dependency hoisting
+- **Vite** for fast, modern building and bundling
+- **TypeScript** for type-safe code
 
 ## Packages
 
@@ -67,8 +74,64 @@ Domain-specific utilities for Graduate College applications.
 
 ## Development
 
+### Initial Setup
+
+Install all dependencies for all packages:
+
+```bash
+npm install
+```
+
+### Building Packages
+
+Build all packages at once from the root:
+
+```bash
+npm run build
+```
+
+Build a specific package:
+
+```bash
+cd packages/vue-auth
+npm run build
+```
+
+### Development Mode
+
+Watch mode for all packages (rebuilds on file changes):
+
+```bash
+npm run dev
+```
+
+Watch mode for a specific package:
+
+```bash
+cd packages/vue-auth
+npm run dev
+```
+
+### Cleaning Build Artifacts
+
+Clean all packages:
+
+```bash
+npm run clean
+```
+
+Clean a specific package:
+
+```bash
+cd packages/vue-auth
+npm run clean
+```
+
+### Package Structure
+
 Each package is independently buildable and has its own:
 - `package.json` - Package configuration and dependencies
+- `vite.config.js` - Vite build configuration
 - `tsconfig.json` - TypeScript configuration
 - `src/` - Source files
 - `README.md` - Documentation
@@ -77,20 +140,38 @@ Each package is independently buildable and has its own:
 
 To use these packages locally before publishing:
 
-1. Build the package (see above)
-2. In the consuming project, install from the local path:
+1. Build all packages from the root:
+   ```bash
+   npm run build
+   ```
 
-```bash
-npm install ../path/to/vue-auth
-```
+2. In the consuming project, install from the local path:
+   ```bash
+   npm install ../path/to/VueLib/packages/vue-auth
+   ```
 
 Or use `npm link`:
 
 ```bash
 # In the package directory
-cd vue-auth
+cd packages/vue-auth
 npm link
 
 # In the consuming project
 npm link @graduatecollege/vue-auth
+```
+
+### Publishing Packages
+
+To publish all packages (requires npm access):
+
+```bash
+# Build all packages first
+npm run build
+
+# Publish each package
+cd packages/codex && npm publish
+cd ../vue-auth && npm publish
+cd ../vue-datetime && npm publish
+cd ../vue-useful-api && npm publish
 ```
