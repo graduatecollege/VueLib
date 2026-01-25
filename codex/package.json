@@ -1,0 +1,34 @@
+{
+  "name": "@graduatecollege/codex",
+  "version": "0.1.0",
+  "description": "Domain-specific utilities for Graduate College applications including terms and programs",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "graduate-college",
+    "academic-terms",
+    "programs",
+    "education",
+    "domain-logic"
+  ],
+  "author": "Graduate College, University of Illinois",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

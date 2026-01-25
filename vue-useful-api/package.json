@@ -1,0 +1,44 @@
+{
+  "name": "@graduatecollege/vue-useful-api",
+  "version": "0.1.0",
+  "description": "Vue 3 API integration utilities with reactive state management for Graduate College applications",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "api",
+    "reactive",
+    "state-management",
+    "graduate-college"
+  ],
+  "author": "Graduate College, University of Illinois",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@vueuse/core": "^14.0.0",
+    "fast-equals": "^6.0.0",
+    "remeda": "^2.33.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vue": "^3.5.0"
+  }
+}
