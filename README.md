@@ -4,12 +4,9 @@ This is an npm workspaces monorepo containing shared Vue 3 packages
 that don't contain components. Components are in the [grad-vue](https://github.com/graduatecollege/grad-vue)
 project.
 
-## Build System
-
-This monorepo uses:
-- **npm workspaces** for package management and dependency hoisting
-- **Vite** for fast, modern building and bundling
-- **TypeScript** for type-safe code
+Note that this project is published as GitHub Packages (https://npm.pkg.github.com)
+and not npmjs.com because it's mainly meant for Graduate College internal use.
+That being said, it's open source, and you're welcome to use it.
 
 ## Packages
 
@@ -65,10 +62,6 @@ Packages are automatically published to GitHub Packages (https://npm.pkg.github.
 git tag v0.1.1
 git push origin v0.1.1
 ```
-
-The GitHub Actions workflow will:
-1. Build all packages
-2. Publish all 4 packages to the GitHub npm registry
 
 ## Copyright
 
