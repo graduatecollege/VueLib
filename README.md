@@ -69,3 +69,7 @@ git push origin v0.1.1
 The GitHub Actions workflow will:
 1. Build all packages
 2. Publish all 4 packages to the GitHub npm registry
+
+## Copyright
+
+Copyright © 2026 University of Illinois Board of Trustees

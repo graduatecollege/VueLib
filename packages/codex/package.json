@@ -1,40 +1,42 @@
 {
-  "name": "@graduatecollege/codex",
-  "version": "1.0.0",
-  "description": "Domain-specific utilities for Graduate College applications including terms and programs",
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@graduatecollege/codex",
+    "description": "Domain-specific utilities for Graduate College applications including terms and programs",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite build --watch",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [
+        "graduate-college",
+        "academic-terms",
+        "programs",
+        "education",
+        "domain-logic"
+    ],
+    "author": {
+        "name": "Mikael Arvola",
+        "email": "marvel@illinois.edu"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/graduatecollege/VueLib.git",
+        "directory": "packages/codex"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "clean": "rm -rf dist"
-  },
-  "keywords": [
-    "graduate-college",
-    "academic-terms",
-    "programs",
-    "education",
-    "domain-logic"
-  ],
-  "author": "Graduate College, University of Illinois",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/graduatecollege/VueLib.git",
-    "directory": "packages/codex"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  }
 }

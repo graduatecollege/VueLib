@@ -28,7 +28,10 @@
         "azure",
         "graduate-college"
     ],
-    "author": "Graduate College, University of Illinois",
+    "author": {
+        "name": "Mikael Arvola",
+        "email": "marvel@illinois.edu"
+    },
     "license": "MIT",
     "repository": {
         "type": "git",

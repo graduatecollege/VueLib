@@ -1,49 +1,52 @@
 {
-  "name": "@graduatecollege/vue-useful-api",
-  "version": "1.0.0",
-  "description": "Vue 3 API integration utilities with reactive state management for Graduate College applications",
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@graduatecollege/vue-useful-api",
+    "version": "1.0.0",
+    "description": "Vue 3 API integration utilities with reactive state management for Graduate College applications",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite build --watch",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [
+        "vue",
+        "vue3",
+        "api",
+        "reactive",
+        "state-management",
+        "graduate-college"
+    ],
+    "author": {
+        "name": "Mikael Arvola",
+        "email": "marvel@illinois.edu"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/graduatecollege/VueLib.git",
+        "directory": "packages/vue-useful-api"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+    "peerDependencies": {
+        "vue": "^3.0.0"
+    },
+    "dependencies": {
+        "@vueuse/core": "^14.0.0",
+        "fast-equals": "^6.0.0",
+        "remeda": "^2.33.0"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
-    "clean": "rm -rf dist"
-  },
-  "keywords": [
-    "vue",
-    "vue3",
-    "api",
-    "reactive",
-    "state-management",
-    "graduate-college"
-  ],
-  "author": "Graduate College, University of Illinois",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/graduatecollege/VueLib.git",
-    "directory": "packages/vue-useful-api"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "peerDependencies": {
-    "vue": "^3.0.0"
-  },
-  "dependencies": {
-    "@vueuse/core": "^14.0.0",
-    "fast-equals": "^6.0.0",
-    "remeda": "^2.33.0"
-  }
 }
