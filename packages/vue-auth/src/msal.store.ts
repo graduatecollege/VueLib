@@ -61,9 +61,11 @@ export const useMsalStore = defineStore("msal", () => {
                         accessTokenExpires.value = 0;
                     }
                     resolve(accessToken.value);
+                    accessTokenPromise = null;
                 } catch (e) {
                     console.error("Failed to load access token", e);
                     resolve(null);
+                    accessTokenPromise = null;
                 }
             });
             return accessTokenPromise;

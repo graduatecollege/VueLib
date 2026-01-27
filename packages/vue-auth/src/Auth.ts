@@ -20,7 +20,7 @@ export class Auth {
     ready: boolean = false;
     redirect: boolean = false;
 
-    protected initializing = false;
+    protected initializing: Promise<any> | undefined = undefined;
 
     static create(apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig) {
         let auth = shallowReactive(new Auth(apiAccessScope, msalInstance, msalConfig));
@@ -35,39 +35,42 @@ export class Auth {
     ) {}
 
     async initialize() {
-        if (!this.inProgress && !this.ready && !this.initializing) {
-            this.initializing = true;
-            await this.msalInstance.initialize().then(() => {
-                const acc = this.msalInstance.getActiveAccount();
-                if (acc) {
-                    this.accounts = this.msalInstance.getAllAccounts();
-                    this.account.value = acc;
-                }
-                return this.msalInstance.handleRedirectPromise().catch(() => {
-                    // Errors should be handled by listening to the LOGIN_FAILURE event
-                    return;
+        if (!this.ready) {
+            if (!this.initializing) {
+                this.initializing = this.msalInstance.initialize().then(() => {
+                    const acc = this.msalInstance.getActiveAccount();
+                    if (acc) {
+                        this.accounts = this.msalInstance.getAllAccounts();
+                        this.account.value = acc;
+                    }
+                    return this.msalInstance.handleRedirectPromise().catch(() => {
+                        // Errors should be handled by listening to the LOGIN_FAILURE event
+                        return;
+                    });
                 });
-            });
+            }
+
+            await this.initializing;
         }
     }
 
     loginRedirect = (redirectStartPage?: string) => {
         this.msalInstance.loginRedirect({
             ...this.msalConfig.loginRequest,
-            redirectStartPage
+            redirectStartPage,
         });
-    }
+    };
 
     logout = () => {
         return this.msalInstance.logoutRedirect({
             onRedirectNavigate: (url) => {
                 // Prevent navigation to logout page
                 return false;
-            }
+            },
         });
     };
 
-    handleRedirect: () => Promise<AuthenticationResult | null>  = async () => {
+    handleRedirect: () => Promise<AuthenticationResult | null> = async () => {
         return await this.msalInstance.handleRedirectPromise();
     };
 
@@ -86,14 +89,14 @@ export class Auth {
                         stopWatcher();
                         reject(e);
                     });
-            }
+            };
 
             const stopWatcher = watch(toRef(this.status), (st) => {
                 execute();
             });
 
             const acquireToken = async () => {
-                await this.msalInstance.initialize();
+                await this.initialize();
                 if (this.redirect) {
                     return await this.handleRedirect();
                 }
@@ -130,7 +133,6 @@ export class Auth {
 
     private addEventListeners() {
         this.msalInstance.addEventCallback((event: EventMessage) => {
-
             if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
                 const payload = event.payload as AuthenticationResult;
                 const account = payload.account;
