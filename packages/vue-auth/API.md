@@ -26,7 +26,7 @@ export declare class Auth {
     inProgress: boolean;
     ready: boolean;
     redirect: boolean;
-    protected initializing: boolean;
+    protected initializing: Promise<any> | undefined;
     static create(apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig): ShallowReactive<Auth>;
     private constructor();
     initialize(): Promise<void>;
