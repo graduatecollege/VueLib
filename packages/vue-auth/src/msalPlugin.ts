@@ -9,13 +9,14 @@ import { type MsalConfig } from "./msal.config.ts";
  * Vue plugin for integrating MSAL authentication
  */
 export const msalPlugin = {
-    install: (app: App, apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig, router: Router) => {
+    install: (app: App, apiAccessScope: string, msalConfig: MsalConfig, router: Router) => {
+        const instance = new PublicClientApplication(msalConfig);
         const navigationClient = new CustomNavigationClient(router);
-        msalInstance.setNavigationClient(navigationClient);
+        instance.setNavigationClient(navigationClient);
 
-        const auth = Auth.create(apiAccessScope, msalInstance, msalConfig);
+        const auth = Auth.create(apiAccessScope, instance, msalConfig);
 
-        app.config.globalProperties.$msalInstance = markRaw(msalInstance);
+        app.config.globalProperties.$msalInstance = markRaw(instance);
         app.config.globalProperties.$auth = auth;
     },
 };

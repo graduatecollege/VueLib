@@ -17,3 +17,4 @@ export { msalPlugin } from './msalPlugin.ts';
 export { CustomNavigationClient } from './NavigationClient.ts';
 export { registerAuthGuard, isAuthenticated, type AuthStoreInterface } from './authGuard.ts';
 export { netIdToColor, getUpdaterInitials } from './authUtils.ts';
+export { useMsalStore } from './msal.store.ts';
