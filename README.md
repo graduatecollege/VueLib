@@ -4,8 +4,7 @@ This is an npm workspaces monorepo containing shared Vue 3 packages
 that don't contain components. Components are in the [grad-vue](https://github.com/graduatecollege/grad-vue)
 project.
 
-Note that this project is published as GitHub Packages (https://npm.pkg.github.com)
-and not npmjs.com because it's mainly meant for Graduate College internal use.
+These packages are mainly meant for Graduate College internal use.
 That being said, it's open source, and you're welcome to use it.
 
 ## Packages

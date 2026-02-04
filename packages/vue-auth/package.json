@@ -1,6 +1,6 @@
 {
     "name": "@graduatecollege/vue-auth",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Vue 3 authentication utilities with MSAL integration for Graduate College applications",
     "type": "module",
     "main": "./dist/index.js",
@@ -35,11 +35,8 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/graduatecollege/VueLib.git",
+        "url": "git+https://github.com/graduatecollege/VueLib.git",
         "directory": "packages/vue-auth"
-    },
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
     },
     "peerDependencies": {
         "@azure/msal-browser": "^4.0.0",

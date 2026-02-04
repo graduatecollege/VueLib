@@ -30,8 +30,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@graduatecollege'
 
       - name: Install dependencies
         run: npm ci --include=dev
@@ -42,6 +40,4 @@ jobs:
           npm --workspaces version ${{ env.VERSION }} --no-git-tag-version
 
       - name: Publish
-        run: npm --workspaces publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm --workspaces publish --access public
