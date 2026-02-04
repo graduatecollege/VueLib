@@ -39,9 +39,9 @@
         "directory": "packages/vue-datetime"
     },
     "peerDependencies": {
-        "vue": "^3.0.0"
+        "vue": "^3.5.27"
     },
     "dependencies": {
-        "dayjs": "^1.11.0"
+        "dayjs": "^1.11.19"
     }
 }
