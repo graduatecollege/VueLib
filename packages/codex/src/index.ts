@@ -1,5 +1,5 @@
 /**
- * @graduatecollege/codex
+ * @illinois-grad/codex
  * 
  * Domain-specific utilities for Graduate College applications.
  * 

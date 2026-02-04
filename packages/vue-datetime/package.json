@@ -1,6 +1,6 @@
 {
-    "name": "@graduatecollege/vue-datetime",
-    "version": "2.0.0",
+    "name": "@illinois-grad/vue-datetime",
+    "version": "2.0.3",
     "description": "Vue 3 datetime formatting utilities for Graduate College applications",
     "type": "module",
     "main": "./dist/index.js",

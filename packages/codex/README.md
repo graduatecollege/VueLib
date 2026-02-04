@@ -1,11 +1,11 @@
-# @graduatecollege/codex
+# @illinois-grad/codex
 
 Domain-specific utilities for Graduate College applications including terms and programs.
 
 ## Installation
 
 ```bash
-npm install @graduatecollege/codex
+npm install @illinois-grad/codex
 ```
 
 ## API Reference

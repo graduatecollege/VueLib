@@ -1,6 +1,6 @@
 {
-    "name": "@graduatecollege/vue-auth",
-    "version": "2.0.0",
+    "name": "@illinois-grad/vue-auth",
+    "version": "2.0.3",
     "description": "Vue 3 authentication utilities with MSAL integration for Graduate College applications",
     "type": "module",
     "main": "./dist/index.js",
@@ -42,7 +42,7 @@
         "@azure/msal-browser": "^4.0.0",
         "pinia": "^3.0.0",
         "vue": "^3.5.27",
-        "vue-router": "^4.0.0"
+        "vue-router": ">=4"
     },
     "dependencies": {
         "@vueuse/core": "^14.2.0"

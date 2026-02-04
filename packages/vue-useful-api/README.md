@@ -1,4 +1,4 @@
-# @graduatecollege/vue-useful-api
+# @illinois-grad/vue-useful-api
 
 Vue 3 API integration utilities with reactive state management for Graduate College applications.
 
@@ -14,7 +14,7 @@ Vue 3 API integration utilities with reactive state management for Graduate Coll
 ## Installation
 
 ```bash
-npm install @graduatecollege/vue-useful-api
+npm install @illinois-grad/vue-useful-api
 ```
 
 ### Peer Dependencies
@@ -35,7 +35,7 @@ The `apiWatch` composable automatically executes API calls when reactive depende
 
 ```typescript
 import { ref } from 'vue'
-import { usefulApi, apiWatch } from '@graduatecollege/vue-useful-api'
+import { usefulApi, apiWatch } from '@illinois-grad/vue-useful-api'
 import { useUsersApi } from './users'
 
 const userId = ref('123')

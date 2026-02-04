@@ -9,10 +9,10 @@ That being said, it's open source, and you're welcome to use it.
 
 ## Packages
 
-- [`@graduatecollege/vue-auth`](packages/vue-auth)
-- [`@graduatecollege/vue-useful-api`](packages/vue-useful-api)
-- [`@graduatecollege/vue-datetime`](packages/vue-datetime)
-- [`@graduatecollege/codex`](packages/codex)
+- [`@illinois-grad/vue-auth`](packages/vue-auth)
+- [`@illinois-grad/vue-useful-api`](packages/vue-useful-api)
+- [`@illinois-grad/vue-datetime`](packages/vue-datetime)
+- [`@illinois-grad/codex`](packages/codex)
 
 ## Development
 
@@ -49,7 +49,7 @@ To use these packages locally before publishing:
    npm link
    
    # In the consuming project
-   npm link @graduatecollege/vue-auth
+   npm link @illinois-grad/vue-auth
    ```
 
 ### Publishing Packages

@@ -1,5 +1,5 @@
 {
-    "name": "@graduatecollege/vue-packages",
+    "name": "@illinois-grad/vue-packages",
     "version": "0.1.0",
     "private": true,
     "description": "Graduate College Vue 3 packages monorepo",

@@ -1,5 +1,5 @@
 {
-    "name": "@graduatecollege/codex",
+    "name": "@illinois-grad/codex",
     "description": "Domain-specific utilities for Graduate College applications including terms and programs",
     "type": "module",
     "main": "./dist/index.js",
@@ -36,5 +36,5 @@
         "url": "git+https://github.com/graduatecollege/VueLib.git",
         "directory": "packages/codex"
     },
-    "version": "2.0.0"
+    "version": "2.0.3"
 }

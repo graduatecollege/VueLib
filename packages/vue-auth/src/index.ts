@@ -1,5 +1,5 @@
 /**
- * @graduatecollege/vue-auth
+ * @illinois-grad/vue-auth
  * 
  * Vue 3 authentication utilities with MSAL integration for Graduate College applications.
  * 

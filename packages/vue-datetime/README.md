@@ -1,11 +1,11 @@
-# @graduatecollege/vue-datetime
+# @illinois-grad/vue-datetime
 
 Vue 3 datetime formatting utilities for Graduate College applications.
 
 ## Installation
 
 ```bash
-npm install @graduatecollege/vue-datetime
+npm install @illinois-grad/vue-datetime
 ```
 
 ### Peer Dependencies
@@ -23,7 +23,7 @@ This package requires the following peer dependencies:
 ### Basic Date Formatting
 
 ```typescript
-import { formatDate } from '@graduatecollege/vue-datetime'
+import { formatDate } from '@illinois-grad/vue-datetime'
 
 // Full format (default)
 formatDate('2024-01-15T10:30:00Z')
@@ -64,7 +64,7 @@ import {
   shortDateFormat,       // "1/15" or "1/15/2024"
   fullDateTimeFormat,    // "Jan 15, 2024 10:30 AM"
   shortDateTimeFormat    // "1/15 10:30 AM" or "1/15/2024 10:30 AM"
-} from '@graduatecollege/vue-datetime'
+} from '@illinois-grad/vue-datetime'
 
 const date = '2024-01-15T10:30:00Z'
 
@@ -87,7 +87,7 @@ import {
   useFullDateTimeFormat,
   useShortDateTimeFormat,
   useDateFormat
-} from '@graduatecollege/vue-datetime'
+} from '@illinois-grad/vue-datetime'
 
 const date = ref('2024-01-15T10:30:00Z')
 

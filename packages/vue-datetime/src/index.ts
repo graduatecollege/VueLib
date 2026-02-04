@@ -1,5 +1,5 @@
 /**
- * @graduatecollege/vue-datetime
+ * @illinois-grad/vue-datetime
  * 
  * Vue 3 datetime formatting utilities for Graduate College applications.
  * 

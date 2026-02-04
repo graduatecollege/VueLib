@@ -1,6 +1,6 @@
 {
-    "name": "@graduatecollege/vue-useful-api",
-    "version": "2.0.0",
+    "name": "@illinois-grad/vue-useful-api",
+    "version": "2.0.3",
     "description": "Vue 3 API integration utilities with reactive state management for Graduate College applications",
     "type": "module",
     "main": "./dist/index.js",

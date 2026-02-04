@@ -1,4 +1,4 @@
-# @graduatecollege/vue-auth
+# @illinois-grad/vue-auth
 
 Vue 3 authentication utilities with MSAL (Microsoft Authentication Library) integration for Graduate College applications.
 
@@ -13,7 +13,7 @@ Vue 3 authentication utilities with MSAL (Microsoft Authentication Library) inte
 ## Installation
 
 ```bash
-npm install @graduatecollege/vue-auth
+npm install @illinois-grad/vue-auth
 ```
 
 ### Peer Dependencies
