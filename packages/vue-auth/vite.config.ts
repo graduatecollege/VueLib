@@ -16,9 +16,11 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: resolve(__dirname, "src/index.ts"),
+            entry: [
+                resolve(__dirname, "src/index.ts"),
+                resolve(__dirname, "src/test.ts"),
+                ],
             formats: ["es"],
-            fileName: "index",
         },
         rollupOptions: {
             external: ["vue", "vue-router", "pinia", "@azure/msal-browser", "@vueuse/core"],
