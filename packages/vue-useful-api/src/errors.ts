@@ -32,6 +32,18 @@ export function isApiErrorResponse(error: unknown): error is ErrorResponse {
 }
 
 /**
+ * Type guard to check if an error is an object with a statusCode property
+ * @param error
+ */
+export function isStatusCodeError(error: unknown): error is { statusCode: number } {
+    return (
+        error !== null &&
+        typeof error === "object" &&
+        "statusCode" in error
+    );
+}
+
+/**
  * Type guard to check if an error is an ErrorResponseObject
  * 
  * @param error - Unknown error object
@@ -78,6 +90,8 @@ export function getApiErrorMessage(error: unknown): string {
                 statusCode = 500;
                 break;
         }
+    } else if (isStatusCodeError(error)) {
+        statusCode = error.statusCode;
     }
 
     if (statusCode !== 0) {
@@ -97,6 +111,7 @@ export function getApiErrorMessage(error: unknown): string {
         }
     }
 
+    // TypeError is what fetch throws when the request fails due to a network error
     if (error instanceof Error && error.name === "TypeError") {
         return "A network error occurred. Please check your internet connection and try again.";
     }
