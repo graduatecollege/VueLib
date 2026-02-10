@@ -60,34 +60,7 @@ export class ErrorHandler {
      * @param info - Information about where the error was captured (e.g., 'render', 'setup')
      */
     readonly vueHandler = (err: unknown, instance: ComponentPublicInstance | null, info: string) => {
-        let errorType: string;
-        let message: string;
-        let stack: string | undefined;
-
-        if (err instanceof Error) {
-            errorType = err.name;
-            message = err.message;
-            stack = err.stack;
-        } else if (err instanceof Object && "name" in err && typeof err.name === "string") {
-            errorType = err.name;
-            if ("message" in err && typeof err.message === "string") {
-                message = err.message;
-            } else {
-                message = err.toString();
-            }
-            if ("stack" in err && typeof err.stack === "string") {
-                stack = err.stack;
-            }
-        } else if (typeof err === "string") {
-            errorType = "string";
-            message = err;
-            stack = undefined;
-        } else {
-            errorType = "unknown";
-            message = err?.toString() || typeof err || "unknown";
-            stack = undefined;
-        }
-
+        const { errorType, message, stack } = this.normalizeError(err);
         this.sendError(errorType, message, stack, { instance, info });
     };
 
@@ -153,6 +126,17 @@ export class ErrorHandler {
      * ```
      */
     reportError(error: unknown, context?: Record<string, unknown>): void {
+        const { errorType, message, stack } = this.normalizeError(error);
+        this.sendError(errorType, message, stack, context);
+    }
+
+    /**
+     * Normalizes an error value into a consistent format.
+     *
+     * @param error - The error to normalize
+     * @returns Normalized error information with errorType, message, and optional stack
+     */
+    private normalizeError(error: unknown): { errorType: string; message: string; stack?: string } {
         let errorType: string;
         let message: string;
         let stack: string | undefined;
@@ -177,11 +161,16 @@ export class ErrorHandler {
             stack = undefined;
         } else {
             errorType = "unknown";
-            message = error?.toString() || typeof error || "unknown";
+            // Try to stringify the error for better debugging, fall back to a descriptive message
+            try {
+                message = error?.toString() || JSON.stringify(error) || "Non-serializable error value";
+            } catch {
+                message = "Non-serializable error value";
+            }
             stack = undefined;
         }
 
-        this.sendError(errorType, message, stack, context);
+        return { errorType, message, stack };
     }
 
     /**
