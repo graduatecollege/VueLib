@@ -204,3 +204,33 @@ export function shortDateTimeFormat(date: string | Date | undefined | null): str
 export function useShortDateTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string> {
     return useDateFormat(date, { shortFormat: true, includeTime: true, yearAware: true });
 }
+
+/**
+ * Formats a given date into a short time format (e.g., "h:mm A").
+ * If the input is undefined, null, or invalid, it returns a default string.
+ *
+ * @param {string | Date | undefined | null} date - The date to format. Can be a string, Date object, or null/undefined.
+ * @return {string} The formatted time string, "None" if the input is null or undefined, or "Invalid Date" if the input is not a valid date.
+ */
+export function shortTimeFormat(date: string | Date | undefined | null): string {
+    if (!date) {
+        return "None";
+    }
+    const d = dayjs.utc(date).local();
+    if (!d.isValid()) {
+        return "Invalid Date";
+    }
+    const currentYear = dayjs().year();
+    let format = "h:mm A";
+    return d.format(format);
+}
+
+/**
+ * Formats a given date into a short time format using reactive computation.
+ *
+ * @param {MaybeRefOrGetter<string | Date | undefined | null>} date - The date to be formatted. Can be a string, Date object, or reactive reference.
+ * @return {ComputedRef<string>} A computed reference containing the formatted short time string.
+ */
+export function useShortTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>) {
+    return computed(() => shortTimeFormat(toValue(date)));
+}
