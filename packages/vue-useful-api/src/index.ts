@@ -8,6 +8,8 @@ export {
 
 export { apiWatch } from './apiWatch.ts';
 
+export { ErrorHandler } from './ErrorHandler.ts';
+
 export {
     getApiErrorMessage,
     isApiErrorResponse,
