@@ -22,5 +22,7 @@ export {
     useFullDateTimeFormat,
     shortDateTimeFormat,
     useShortDateTimeFormat,
+    shortTimeFormat,
+    useShortTimeFormat,
     type DateFormatOptions
 } from './dateFormat.ts';
