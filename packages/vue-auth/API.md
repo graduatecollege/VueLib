@@ -6,6 +6,7 @@ Full d.ts definition:
 import { AccountInfo } from '@azure/msal-browser';
 import { App } from 'vue';
 import { AuthenticationResult } from '@azure/msal-browser';
+import { ComputedRef } from 'vue';
 import { InteractionStatus } from '@azure/msal-browser';
 import { LogLevel } from '@azure/msal-browser';
 import { NavigationClient } from '@azure/msal-browser';
@@ -15,6 +16,7 @@ import { Ref } from 'vue';
 import { Router } from 'vue-router';
 import { ShallowReactive } from 'vue';
 import { SilentRequest } from '@azure/msal-browser';
+import { StoreDefinition } from 'pinia';
 
 export declare class Auth {
     private apiAccessScope;
@@ -129,7 +131,7 @@ export declare interface MsalConfig {
  * Vue plugin for integrating MSAL authentication
  */
 export declare const msalPlugin: {
-    install: (app: App, apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig, router: Router) => void;
+    install: (app: App, apiAccessScope: string, msalConfig: MsalConfig, router: Router) => void;
 };
 
 /**
@@ -146,6 +148,101 @@ export declare function netIdToColor(netId: string): string;
  * Routes with \`meta.requiresAuth = true\` will require authentication.
  */
 export declare function registerAuthGuard(router: Router, getAuthStore: () => AuthStoreInterface): void;
+
+export declare const useMsalStore: StoreDefinition<"msal", Pick<{
+name: Ref<string, string>;
+email: Ref<string, string>;
+netId: ComputedRef<string>;
+accessToken: Ref<string, string>;
+accessTokenExpires: Ref<number, number>;
+isAuthenticated: Ref<boolean, boolean>;
+loading: ComputedRef<boolean>;
+getAccessToken: () => Promise<string | null>;
+login: (redirectStartPage?: string) => void;
+logout: () => Promise<void>;
+authTokenProvider: (url: string) => Promise<string | null>;
+initial: ComputedRef<string>;
+handleRedirect: () => Promise<AuthenticationResult | null>;
+initPromise: Promise<void>;
+}, "name" | "email" | "accessToken" | "accessTokenExpires" | "isAuthenticated" | "initPromise">, Pick<{
+name: Ref<string, string>;
+email: Ref<string, string>;
+netId: ComputedRef<string>;
+accessToken: Ref<string, string>;
+accessTokenExpires: Ref<number, number>;
+isAuthenticated: Ref<boolean, boolean>;
+loading: ComputedRef<boolean>;
+getAccessToken: () => Promise<string | null>;
+login: (redirectStartPage?: string) => void;
+logout: () => Promise<void>;
+authTokenProvider: (url: string) => Promise<string | null>;
+initial: ComputedRef<string>;
+handleRedirect: () => Promise<AuthenticationResult | null>;
+initPromise: Promise<void>;
+}, "netId" | "loading" | "initial">, Pick<{
+name: Ref<string, string>;
+email: Ref<string, string>;
+netId: ComputedRef<string>;
+accessToken: Ref<string, string>;
+accessTokenExpires: Ref<number, number>;
+isAuthenticated: Ref<boolean, boolean>;
+loading: ComputedRef<boolean>;
+getAccessToken: () => Promise<string | null>;
+login: (redirectStartPage?: string) => void;
+logout: () => Promise<void>;
+authTokenProvider: (url: string) => Promise<string | null>;
+initial: ComputedRef<string>;
+handleRedirect: () => Promise<AuthenticationResult | null>;
+initPromise: Promise<void>;
+}, "login" | "logout" | "handleRedirect" | "getAccessToken" | "authTokenProvider">>;
+
+export { }
+
+import { App } from 'vue';
+import { Ref } from 'vue';
+import { Router } from 'vue-router';
+
+/**
+ * Test authentication bypass that simulates authentication without MSAL.
+ * This is used during Playwright tests to bypass the Azure AD authentication.
+ */
+export declare class TestAuth {
+    account: Ref<any, any>;
+    accounts: {
+        name: string;
+        username: string;
+        idTokenClaims: {
+            given_name: string;
+        };
+    }[];
+    status: any;
+    inProgress: boolean;
+    ready: boolean;
+    redirect: boolean;
+    initialize(): Promise<void>;
+    loginRedirect: (_redirectStartPage?: string) => void;
+    logout: () => Promise<void>;
+    handleRedirect: () => Promise<null>;
+    loadToken(_request: any): Promise<{
+        accessToken: string;
+        expiresOn: Date;
+    }>;
+    loadGraphToken(): Promise<{
+        accessToken: string;
+        expiresOn: Date;
+    }>;
+    loadApiToken(): Promise<{
+        accessToken: string;
+        expiresOn: Date;
+    }>;
+}
+
+/**
+ * Test authentication plugin that bypasses MSAL for Playwright tests.
+ */
+export declare const testAuthPlugin: {
+    install: (app: App, router: Router) => void;
+};
 
 export { }
 

@@ -3,6 +3,8 @@
 Full d.ts definition:
 
 ```typescript
+import { App } from 'vue';
+import { ComponentPublicInstance } from 'vue';
 import { EventHookOn } from '@vueuse/core';
 import { Ref } from 'vue';
 import { WatchDebouncedOptions } from '@vueuse/core';
@@ -33,6 +35,22 @@ export declare function apiWatch<Exec extends (arg?: any, arg2?: any, arg3?: any
  * with loading states, error handling, and event hooks.
  */
 export declare function applyUsefulApi<T extends object>(apiInstance: T): UsefulApi<T>;
+
+export declare class ErrorHandler {
+    private readonly endpoint;
+    private readonly agent;
+    constructor(endpoint: string, agent: string);
+    /**
+     * Register global error handlers for Vue and browser events.
+     * @param app Vue application instance
+     * @param global Set to true to also register window.onerror and window.onunhandledrejection
+     */
+    readonly register: (app: App, global?: boolean) => void;
+    readonly vueHandler: (err: unknown, instance: ComponentPublicInstance | null, info: string) => void;
+    readonly jsHandler: (event: ErrorEvent) => void;
+    readonly unhandledRejectionHandler: (event: PromiseRejectionEvent) => void;
+    private sendError;
+}
 
 /**
  * Standard error response interface for API errors
