@@ -18,7 +18,7 @@ export interface CfopParts {
     /**
      * Account: Five-digit (general ledger) or six-digit (operating ledger) code.
      */
-    account: string;
+    account?: string;
     /**
      * Program: Six-digit code for financial reporting implications.
      */
@@ -36,18 +36,24 @@ export interface CfopParts {
 /**
  * Regular expression for parsing C-FOAPAL accounting strings.
  * 
- * Format: C-FFFFFF-OOOOOO-AAAAAA-PPPPPP-AAA-LLLLLL (Activity and Location are optional)
+ * Format: C-FFFFFF-OOOOOO-(AAAAAA-)?PPPPPP-AAA-LLLLLL (Account, Activity and Location are optional)
  * Segments can be separated by dashes, periods, or spaces.
+ * 
+ * Length notes (no separators):
+ * - CFOP: 19 characters (no account)
+ * - CFOAP: 25 characters
+ * - CFOAPA: 31 characters
+ * - CFOAPAL: 37 characters
  * 
  * - Chart: 1 digit (1, 2, 4, or 9)
  * - Fund: 6 digits
  * - Organization: 6 digits
- * - Account: 5 or 6 digits
+ * - Account: 5 or 6 digits (optional)
  * - Program: 6 digits
  * - Activity: 3 or 6 digits (optional)
  * - Location: 6 digits (optional)
  */
-export const cfopRegex = /^([1249])[-. ]?(\d{6})[-. ]?(\d{6})[-. ]?(\d{5,6})[-. ]?(\d{6})(?:[-. ]?(\d{3}|\d{6}))?(?:[-. ]?(\d{6}))?$/;
+export const cfopRegex = /^(?<chart>[1249])[-. ]?(?<fund>\d{6})[-. ]?(?<organization>\d{6})(?:[-. ]?(?<account>\d{5,6}))?[-. ]?(?<program>\d{6})(?:[-. ]?(?<activity>\d{3}|\d{6}))?(?:[-. ]?(?<location>\d{6}))?$/;
 
 /**
  * Validates and splits a C-FOAPAL accounting string into its component parts.
@@ -61,20 +67,28 @@ export function splitCfop(cfop: string): CfopParts | undefined {
         return undefined;
     }
 
-    const parts: CfopParts = {
-        chart: match[1],
-        fund: match[2],
-        organization: match[3],
-        account: match[4],
-        program: match[5],
-    };
-
-    if (match[6]) {
-        parts.activity = match[6];
+    const g = match.groups;
+    if (!g) {
+        return undefined;
     }
 
-    if (match[7]) {
-        parts.location = match[7];
+    const parts: CfopParts = {
+        chart: g.chart,
+        fund: g.fund,
+        organization: g.organization,
+        program: g.program,
+    };
+
+    if (g.account) {
+        parts.account = g.account;
+    }
+
+    if (g.activity) {
+        parts.activity = g.activity;
+    }
+
+    if (g.location) {
+        parts.location = g.location;
     }
 
     return parts;

@@ -3,6 +3,29 @@ import { describe, expect, it } from 'vitest';
 import { splitCfop } from './cfop.ts';
 
 describe('splitCfop', () => {
+    it('parses CFOP strings (no account) with various separators', () => {
+        expect(splitCfop('1222222333333444444')).toEqual({
+            chart: '1',
+            fund: '222222',
+            organization: '333333',
+            program: '444444',
+        });
+
+        expect(splitCfop('1-222222-333333-444444')).toEqual({
+            chart: '1',
+            fund: '222222',
+            organization: '333333',
+            program: '444444',
+        });
+
+        expect(splitCfop('1.222222.333333.444444')).toEqual({
+            chart: '1',
+            fund: '222222',
+            organization: '333333',
+            program: '444444',
+        });
+    });
+
     it('parses valid CFOP strings with various separators', () => {
         expect(splitCfop('1-123456-654321-55555-111111')).toEqual({
             chart: '1',
@@ -61,6 +84,9 @@ describe('splitCfop', () => {
     it('returns undefined for invalid CFOP strings', () => {
         // invalid chart
         expect(splitCfop('3-123456-654321-55555-111111')).toBeUndefined();
+
+        // invalid CFOP (missing program)
+        expect(splitCfop('1-222222-333333')).toBeUndefined();
 
         // invalid fund (too short)
         expect(splitCfop('1-12345-654321-55555-111111')).toBeUndefined();
