@@ -18,7 +18,8 @@
     "scripts": {
         "build": "npm run build --workspaces --if-present",
         "dev": "npm run dev --workspaces --if-present",
-        "clean": "npm run clean --workspaces --if-present"
+        "clean": "npm run clean --workspaces --if-present",
+        "test": "vitest run"
     },
     "keywords": [
         "vue",
@@ -31,6 +32,7 @@
         "vite": "^7.3.1",
         "vite-plugin-dts": "^4.5.4",
         "vue": "^3.5.27",
-        "prettier": "^3.8.1"
+        "prettier": "^3.8.1",
+        "vitest": "^4.0.18"
     }
 }
