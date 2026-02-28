@@ -14,7 +14,7 @@ export interface CfopParts {
     /**
      * Organization: Six-digit code representing the unit that owns the string.
      */
-    organization: string;
+    org: string;
     /**
      * Account: Five-digit (general ledger) or six-digit (operating ledger) code.
      */
@@ -53,7 +53,7 @@ export interface CfopParts {
  * - Activity: 3 or 6 digits (optional)
  * - Location: 6 digits (optional)
  */
-export const cfopRegex = /^(?<chart>[1249])[-. ]?(?<fund>\d{6})[-. ]?(?<organization>\d{6})(?:[-. ]?(?<account>\d{5,6}))?[-. ]?(?<program>\d{6})(?:[-. ]?(?<activity>\d{3}|\d{6}))?(?:[-. ]?(?<location>\d{6}))?$/;
+export const cfopRegex = /^(?<chart>[1249])[-. ]?(?<fund>\d{6})[-. ]?(?<org>\d{6})(?:[-. ]?(?<account>\d{5,6}))?[-. ]?(?<program>\d{6})(?:[-. ]?(?<activity>\d{3}|\d{6}))?(?:[-. ]?(?<location>\d{6}))?$/;
 
 /**
  * Validates and splits a C-FOAPAL accounting string into its component parts.
@@ -75,7 +75,7 @@ export function splitCfop(cfop: string): CfopParts | undefined {
     const parts: CfopParts = {
         chart: g.chart,
         fund: g.fund,
-        organization: g.organization,
+        org: g.org,
         program: g.program,
     };
 
