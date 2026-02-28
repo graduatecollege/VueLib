@@ -18,3 +18,8 @@ export {
     type ErrorResponse,
     type ErrorResponseObject
 } from './errors.ts';
+
+export {
+    ErrorHandler,
+    type ErrorHandlerConfig
+} from './errorHandler.ts';

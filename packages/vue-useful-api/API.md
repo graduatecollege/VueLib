@@ -3,6 +3,7 @@
 Full d.ts definition:
 
 ```typescript
+import { ComponentPublicInstance } from 'vue';
 import { EventHookOn } from '@vueuse/core';
 import { Ref } from 'vue';
 import { WatchDebouncedOptions } from '@vueuse/core';
@@ -33,6 +34,107 @@ export declare function apiWatch<Exec extends (arg?: any, arg2?: any, arg3?: any
  * with loading states, error handling, and event hooks.
  */
 export declare function applyUsefulApi<T extends object>(apiInstance: T): UsefulApi<T>;
+
+/**
+ * Global error handler utility for Vue applications.
+ * Provides handlers for Vue errors, window errors, and generic error reporting.
+ *
+ * @example
+ * \`\`\`typescript
+ * const errorHandler = new ErrorHandler({
+ *   endpoint: 'https://api.example.com/errors',
+ *   agent: 'my-app',
+ *   logToConsole: true
+ * });
+ *
+ * // Use with Vue
+ * app.config.errorHandler = errorHandler.vueHandler;
+ *
+ * // Use with window.onerror
+ * window.onerror = errorHandler.windowErrorHandler;
+ *
+ * // Report errors manually
+ * errorHandler.reportError(new Error('Something went wrong'));
+ * \`\`\`
+ */
+export declare class ErrorHandler {
+    private readonly endpoint;
+    private readonly agent;
+    private readonly logToConsole;
+    constructor(config: ErrorHandlerConfig);
+    /**
+     * Vue error handler that can be assigned to app.config.errorHandler.
+     * Captures and reports errors from Vue components.
+     *
+     * @param err - The error that occurred
+     * @param instance - The component instance where the error occurred
+     * @param info - Information about where the error was captured (e.g., 'render', 'setup')
+     */
+    readonly vueHandler: (err: unknown, instance: ComponentPublicInstance | null, info: string) => void;
+    /**
+     * Window error handler that can be assigned to window.onerror.
+     * Captures and reports unhandled JavaScript errors.
+     *
+     * @param message - Error message
+     * @param source - URL of the script where the error occurred
+     * @param lineno - Line number where the error occurred
+     * @param colno - Column number where the error occurred
+     * @param error - The Error object (if available)
+     * @returns false to prevent default browser error handling
+     */
+    readonly windowErrorHandler: (message: string | Event, source?: string, lineno?: number, colno?: number, error?: Error) => boolean;
+    /**
+     * Generic error reporting method for manually reporting errors from application code.
+     * Can be used to report any error, including custom error conditions.
+     *
+     * @param error - The error to report (Error object, string, or any other value)
+     * @param context - Optional additional context to include with the error report
+     *
+     * @example
+     * \`\`\`typescript
+     * try {
+     *   // some code
+     * } catch (err) {
+     *   errorHandler.reportError(err, { userId: '123', action: 'saveData' });
+     * }
+     * \`\`\`
+     */
+    reportError(error: unknown, context?: Record<string, unknown>): void;
+    /**
+     * Normalizes an error value into a consistent format.
+     *
+     * @param error - The error to normalize
+     * @returns Normalized error information with errorType, message, and optional stack
+     */
+    private normalizeError;
+    /**
+     * Internal method to send error reports to the configured endpoint.
+     *
+     * @param errorType - Type/name of the error
+     * @param message - Error message
+     * @param stack - Stack trace (if available)
+     * @param context - Additional context information
+     */
+    private sendError;
+}
+
+/**
+ * Configuration options for the ErrorHandler
+ */
+export declare interface ErrorHandlerConfig {
+    /**
+     * The endpoint URL to send error reports to
+     */
+    endpoint: string;
+    /**
+     * An identifier for the application/agent sending the error
+     */
+    agent: string;
+    /**
+     * Whether to also log errors to the console (default: true)
+     */
+    logToConsole?: boolean;
+}
 
 /**
  * Standard error response interface for API errors
