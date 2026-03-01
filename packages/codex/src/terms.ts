@@ -275,10 +275,3 @@ export function getCurrentTerm(): Term {
 export function getCurrentTermCode(): string {
     return getCurrentTerm().code;
 }
-
-/**
- * A composable function that computes a parsed term code from a given term code reference or getter.
- */
-export function useTerm(termCode: MaybeRefOrGetter<string>) {
-    return computed(() => parseTermCode(toValue(termCode)));
-}
