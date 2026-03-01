@@ -1,5 +1,6 @@
 import { type App, markRaw, ref, shallowReactive } from "vue";
 import type { Router } from "vue-router";
+import { createMsalConfig, type MsalConfig } from "./msal.config.ts";
 
 /**
  * Test authentication bypass that simulates authentication without MSAL.
@@ -28,6 +29,8 @@ export class TestAuth {
     inProgress = false;
     ready = true;
     redirect = false;
+
+    constructor(public readonly msalConfig: MsalConfig) {}
 
     async initialize() {
         // Already initialized, set account immediately
@@ -67,8 +70,14 @@ export class TestAuth {
  * Test authentication plugin that bypasses MSAL for Playwright tests.
  */
 export const testAuthPlugin = {
-    install: (app: App, router: Router) => {
-        const auth = shallowReactive(new TestAuth());
+    install: (app: App, router: Router, host: string) => {
+        const auth = shallowReactive(new TestAuth(createMsalConfig(
+            "test-client-id",
+            "test-tenant-id",
+            "test-api-scope",
+            [host],
+            ["test-scope"],
+        )));
         // @ts-ignore
         app.config.globalProperties.$msalInstance = markRaw({});
         // @ts-ignore
