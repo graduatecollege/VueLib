@@ -17,17 +17,13 @@ export interface ErrorResponseObject {
 
 /**
  * Type guard to check if an error is an ErrorResponse
- * 
+ *
  * @param error - Unknown error object
  * @returns True if error is an ErrorResponse
  */
 export function isApiErrorResponse(error: unknown): error is ErrorResponse {
     return (
-        error !== null &&
-        typeof error === "object" &&
-        "statusCode" in error &&
-        "errors" in error &&
-        "message" in error
+        error !== null && typeof error === "object" && "statusCode" in error && "errors" in error && "message" in error
     );
 }
 
@@ -36,41 +32,48 @@ export function isApiErrorResponse(error: unknown): error is ErrorResponse {
  * @param error
  */
 export function isStatusCodeError(error: unknown): error is { statusCode: number } {
-    return (
-        error !== null &&
-        typeof error === "object" &&
-        "statusCode" in error
-    );
+    return error !== null && typeof error === "object" && "statusCode" in error;
 }
 
 /**
  * Type guard to check if an error is an ErrorResponseObject
- * 
+ *
  * @param error - Unknown error object
  * @returns True if error is an ErrorResponseObject
  */
 export function isErrorResponseObject(error: unknown): error is ErrorResponseObject {
-    return (
-        error !== null &&
-        typeof error === "object" &&
-        "error" in error &&
-        "message" in error
-    );
+    return error !== null && typeof error === "object" && "error" in error && "message" in error;
+}
+
+/**
+ * Type guard to check if an error is an ApiError
+ * @param error - Unknown error object
+ */
+export function isApiError(error: unknown): error is ApiError {
+    return error instanceof ApiError;
 }
 
 /**
  * Extracts a user-friendly error message from an API error.
- * 
+ *
  * This function handles various error formats and provides consistent,
  * user-friendly error messages based on HTTP status codes.
- * 
+ *
  * @param error - The error to extract a message from
  * @returns User-friendly error message
  */
 export function getApiErrorMessage(error: unknown): string {
     console.log("getApiErrorMessage:", error);
     let statusCode = 0;
-    if (isApiErrorResponse(error)) {
+    if (isApiError(error)) {
+        if (typeof error.context === "string") {
+            return error.context;
+        }
+        if (typeof error.context === "object" && "message" in error.context) {
+            return error.context.message;
+        }
+        statusCode = error.statusCode;
+    } else if (isApiErrorResponse(error)) {
         statusCode = error.statusCode;
     } else if (isErrorResponseObject(error)) {
         switch (error.error) {
@@ -121,7 +124,7 @@ export function getApiErrorMessage(error: unknown): string {
 
 /**
  * Custom error class with additional context
- * 
+ *
  * @example
  * ```typescript
  * throw new ApiError("Failed to save record", 500, "abc123")
