@@ -3,6 +3,66 @@
 Full d.ts definition:
 
 ```typescript
+import { ComputedRef } from 'vue';
+import { MaybeRefOrGetter } from 'vue';
+
+/**
+ * Components of a C-FOAPAL accounting string.
+ */
+export declare interface CfopParts {
+    /**
+     * Chart: One-digit code for the applicable university or System Office.
+     * 1 = UIUC, 2 = UIC, 4 = UIS, 9 = System Offices.
+     */
+    chart: string;
+    /**
+     * Fund: Six-digit code identifying the funding source.
+     */
+    fund: string;
+    /**
+     * Organization: Six-digit code representing the unit that owns the string.
+     */
+    org: string;
+    /**
+     * Account: Five-digit (general ledger) or six-digit (operating ledger) code.
+     */
+    account?: string;
+    /**
+     * Program: Six-digit code for financial reporting implications.
+     */
+    program: string;
+    /**
+     * Activity (Optional): Three-digit or six-digit code to track specific projects.
+     */
+    activity?: string;
+    /**
+     * Location (Optional): Six-digit code primarily used for fixed assets.
+     */
+    location?: string;
+}
+
+/**
+ * Regular expression for parsing C-FOAPAL accounting strings.
+ *
+ * Format: C-FFFFFF-OOOOOO-(AAAAAA-)?PPPPPP-AAA-LLLLLL (Account, Activity and Location are optional)
+ * Segments can be separated by dashes, periods, or spaces.
+ *
+ * Length notes (no separators):
+ * - CFOP: 19 characters (no account)
+ * - CFOAP: 25 characters
+ * - CFOAPA: 31 characters
+ * - CFOAPAL: 37 characters
+ *
+ * - Chart: 1 digit (1, 2, 4, or 9)
+ * - Fund: 6 digits
+ * - Organization: 6 digits
+ * - Account: 5 or 6 digits (optional)
+ * - Program: 6 digits
+ * - Activity: 3 or 6 digits (optional)
+ * - Location: 6 digits (optional)
+ */
+export declare const cfopRegex: RegExp;
+
 /**
  * Create a Term object from year and month/name.
  *
@@ -124,6 +184,14 @@ export declare interface ProgramCodeParts {
 export declare const programRegex: RegExp;
 
 /**
+ * Validates and splits a C-FOAPAL accounting string into its component parts.
+ *
+ * @param cfop - The C-FOAPAL string to parse.
+ * @returns An object containing the parsed components, or undefined if the string is invalid.
+ */
+export declare function splitCfop(cfop: string): CfopParts | undefined;
+
+/**
  * Split a program code into its component parts.
  *
  * A program code is made up of several parts:
@@ -187,6 +255,11 @@ export declare interface Term {
  * Matches format: "1YYYYX" where YYYY is year and X is term indicator (1, 5, or 8)
  */
 export declare const termRegex: RegExp;
+
+/**
+ * A composable function that computes a parsed term code from a given term code reference or getter.
+ */
+export declare function useTerm(termCode: MaybeRefOrGetter<string>): ComputedRef<Term>;
 
 export { }
 
