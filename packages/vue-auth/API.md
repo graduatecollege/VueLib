@@ -199,14 +199,46 @@ initPromise: Promise<void>;
 export { }
 
 import { App } from 'vue';
+import { LogLevel } from '@azure/msal-browser';
 import { Ref } from 'vue';
 import { Router } from 'vue-router';
+
+/**
+ * Configuration interface for MSAL
+ */
+declare interface MsalConfig {
+    auth: {
+        clientId: string;
+        authority: string;
+        redirectUri: string;
+        postLogoutRedirectUri: string;
+    };
+    cache: {
+        cacheLocation: "localStorage" | "sessionStorage";
+        storeAuthStateInCookie?: boolean;
+    };
+    system?: {
+        loggerOptions?: {
+            loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => void;
+            logLevel?: LogLevel;
+        };
+    };
+    loginRequest: {
+        scopes: string[];
+    };
+    apiAccessScope: string;
+    allowedHosts: string[];
+    graphConfig?: {
+        graphMeEndpoint: string;
+    };
+}
 
 /**
  * Test authentication bypass that simulates authentication without MSAL.
  * This is used during Playwright tests to bypass the Azure AD authentication.
  */
 export declare class TestAuth {
+    readonly msalConfig: MsalConfig;
     account: Ref<any, any>;
     accounts: {
         name: string;
@@ -219,6 +251,7 @@ export declare class TestAuth {
     inProgress: boolean;
     ready: boolean;
     redirect: boolean;
+    constructor(msalConfig: MsalConfig);
     initialize(): Promise<void>;
     loginRedirect: (_redirectStartPage?: string) => void;
     logout: () => Promise<void>;
@@ -241,7 +274,7 @@ export declare class TestAuth {
  * Test authentication plugin that bypasses MSAL for Playwright tests.
  */
 export declare const testAuthPlugin: {
-    install: (app: App, router: Router) => void;
+    install: (app: App, router: Router, host: string) => void;
 };
 
 export { }
