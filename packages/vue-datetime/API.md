@@ -3,13 +3,11 @@
 Full d.ts definition:
 
 ```typescript
-import { ComputedRef } from 'vue';
-import { MaybeRefOrGetter } from 'vue';
-
+import { ComputedRef, MaybeRefOrGetter } from 'vue';
 /**
  * Options for date formatting
  */
-export declare interface DateFormatOptions {
+export interface DateFormatOptions {
     /**
      * Include time in the output
      * @default false
@@ -36,7 +34,6 @@ export declare interface DateFormatOptions {
      */
     invalidText?: string;
 }
-
 /**
  * Formats a date with the given options.
  *
@@ -55,41 +52,6 @@ export declare interface DateFormatOptions {
  * \`\`\`
  */
 export declare function formatDate(date: string | Date | undefined | null, options?: DateFormatOptions): string;
-
-/**
- * Formats a date in full format (e.g., "Jan 15, 2024")
- *
- * @param date - Date to format
- * @returns Formatted date string
- */
-export declare function fullDateFormat(date: string | Date | undefined | null): string;
-
-/**
- * Formats a date with time in full format (e.g., "Jan 15, 2024 10:30 AM")
- *
- * @param date - Date to format
- * @returns Formatted date string
- */
-export declare function fullDateTimeFormat(date: string | Date | undefined | null): string;
-
-/**
- * Formats a date in short format (e.g., "1/15" or "1/15/2024")
- * Year is omitted if it's the current year.
- *
- * @param date - Date to format
- * @returns Formatted date string
- */
-export declare function shortDateFormat(date: string | Date | undefined | null): string;
-
-/**
- * Formats a date with time in short format (e.g., "1/15 10:30 AM" or "1/15/2024 10:30 AM")
- * Year is omitted if it's the current year.
- *
- * @param date - Date to format
- * @returns Formatted date string
- */
-export declare function shortDateTimeFormat(date: string | Date | undefined | null): string;
-
 /**
  * Vue composable for reactive date formatting.
  *
@@ -105,7 +67,13 @@ export declare function shortDateTimeFormat(date: string | Date | undefined | nu
  * \`\`\`
  */
 export declare function useDateFormat(date: MaybeRefOrGetter<string | Date | undefined | null>, options?: DateFormatOptions): ComputedRef<string>;
-
+/**
+ * Formats a date in full format (e.g., "Jan 15, 2024")
+ *
+ * @param date - Date to format
+ * @returns Formatted date string
+ */
+export declare function fullDateFormat(date: string | Date | undefined | null): string;
 /**
  * Vue composable for full date formatting (e.g., "Jan 15, 2024")
  *
@@ -113,15 +81,14 @@ export declare function useDateFormat(date: MaybeRefOrGetter<string | Date | und
  * @returns Computed ref with formatted date
  */
 export declare function useFullDateFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
-
 /**
- * Vue composable for full date and time formatting (e.g., "Jan 15, 2024 10:30 AM")
+ * Formats a date in short format (e.g., "1/15" or "1/15/2024")
+ * Year is omitted if it's the current year.
  *
- * @param date - Reactive or static date value
- * @returns Computed ref with formatted date
+ * @param date - Date to format
+ * @returns Formatted date string
  */
-export declare function useFullDateTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
-
+export declare function shortDateFormat(date: string | Date | undefined | null): string;
 /**
  * Vue composable for short date formatting (e.g., "1/15" or "1/15/2024")
  *
@@ -129,7 +96,28 @@ export declare function useFullDateTimeFormat(date: MaybeRefOrGetter<string | Da
  * @returns Computed ref with formatted date
  */
 export declare function useShortDateFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
-
+/**
+ * Formats a date with time in full format (e.g., "Jan 15, 2024 10:30 AM")
+ *
+ * @param date - Date to format
+ * @returns Formatted date string
+ */
+export declare function fullDateTimeFormat(date: string | Date | undefined | null): string;
+/**
+ * Vue composable for full date and time formatting (e.g., "Jan 15, 2024 10:30 AM")
+ *
+ * @param date - Reactive or static date value
+ * @returns Computed ref with formatted date
+ */
+export declare function useFullDateTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
+/**
+ * Formats a date with time in short format (e.g., "1/15 10:30 AM" or "1/15/2024 10:30 AM")
+ * Year is omitted if it's the current year.
+ *
+ * @param date - Date to format
+ * @returns Formatted date string
+ */
+export declare function shortDateTimeFormat(date: string | Date | undefined | null): string;
 /**
  * Vue composable for short date and time formatting (e.g., "1/15 10:30 AM" or "1/15/2024 10:30 AM")
  *
@@ -137,7 +125,36 @@ export declare function useShortDateFormat(date: MaybeRefOrGetter<string | Date 
  * @returns Computed ref with formatted date
  */
 export declare function useShortDateTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
-
-export { }
-
+/**
+ * Formats a given date into a short time format (e.g., "h:mm A").
+ * If the input is undefined, null, or invalid, it returns a default string.
+ *
+ * @param {string | Date | undefined | null} date - The date to format. Can be a string, Date object, or null/undefined.
+ * @return {string} The formatted time string, "None" if the input is null or undefined, or "Invalid Date" if the input is not a valid date.
+ */
+export declare function shortTimeFormat(date: string | Date | undefined | null): string;
+/**
+ * Formats a given date into a short time format using reactive computation.
+ *
+ * @param {MaybeRefOrGetter<string | Date | undefined | null>} date - The date to be formatted. Can be a string, Date object, or reactive reference.
+ * @return {ComputedRef<string>} A computed reference containing the formatted short time string.
+ */
+export declare function useShortTimeFormat(date: MaybeRefOrGetter<string | Date | undefined | null>): ComputedRef<string>;
+//# sourceMappingURL=dateFormat.d.ts.map
+export {};
+//# sourceMappingURL=dateFormat.test.d.ts.map
+/**
+ * @illinois-grad/vue-datetime
+ *
+ * Vue 3 datetime formatting utilities for Graduate College applications.
+ *
+ * This package provides:
+ * - Flexible date formatting with multiple options
+ * - Timezone-aware formatting (UTC to local conversion)
+ * - Year-aware formatting (omits current year for brevity)
+ * - Reactive Vue composables for automatic updates
+ * - Convenient preset formatters for common formats
+ */
+export { formatDate, useDateFormat, fullDateFormat, useFullDateFormat, shortDateFormat, useShortDateFormat, fullDateTimeFormat, useFullDateTimeFormat, shortDateTimeFormat, useShortDateTimeFormat, shortTimeFormat, useShortTimeFormat, type DateFormatOptions } from './dateFormat.ts';
+//# sourceMappingURL=index.d.ts.map
 ```
