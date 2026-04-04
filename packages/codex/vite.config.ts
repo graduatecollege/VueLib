@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 // @ts-ignore
 import { fileURLToPath } from "url";
-import dts from "vite-plugin-dts";
+import dts from "unplugin-dts/vite";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -11,7 +11,6 @@ export default defineConfig({
     plugins: [
         dts({
             insertTypesEntry: true,
-            rollupTypes: true,
         }),
     ],
     build: {
@@ -20,7 +19,7 @@ export default defineConfig({
             formats: ["es"],
             fileName: "index",
         },
-        rollupOptions: {
+        rolldownOptions: {
             // Codex has zero dependencies - no externals needed
             external: [],
         },

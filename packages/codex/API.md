@@ -3,13 +3,10 @@
 Full d.ts definition:
 
 ```typescript
-import { ComputedRef } from 'vue';
-import { MaybeRefOrGetter } from 'vue';
-
 /**
  * Components of a C-FOAPAL accounting string.
  */
-export declare interface CfopParts {
+export interface CfopParts {
     /**
      * Chart: One-digit code for the applicable university or System Office.
      * 1 = UIUC, 2 = UIC, 4 = UIS, 9 = System Offices.
@@ -40,7 +37,6 @@ export declare interface CfopParts {
      */
     location?: string;
 }
-
 /**
  * Regular expression for parsing C-FOAPAL accounting strings.
  *
@@ -62,93 +58,37 @@ export declare interface CfopParts {
  * - Location: 6 digits (optional)
  */
 export declare const cfopRegex: RegExp;
-
 /**
- * Create a Term object from year and month/name.
+ * Validates and splits a C-FOAPAL accounting string into its component parts.
  *
- * @param year - Four digit year
- * @param monthInput - Month number (1, 5, 8), term name ("Spring", "Summer", "Fall"), or graduation month ("May", "Aug", "Dec")
- * @returns Complete Term object
- * @throws Error if monthInput is invalid
+ * @param cfop - The C-FOAPAL string to parse.
+ * @returns An object containing the parsed components, or undefined if the string is invalid.
  */
-export declare function createTerm(year: number, monthInput: number | Term["name"] | Term["gradMonthName"]): Term;
-
+export declare function splitCfop(cfop: string): CfopParts | undefined;
+//# sourceMappingURL=cfop.d.ts.map
+export {};
+//# sourceMappingURL=cfop.test.d.ts.map
 /**
- * Generate a term code from year and month.
+ * @illinois-grad/codex
  *
- * @param year - Four digit year
- * @param month - Month number (1, 5, or 8)
- * @returns Term code string in format "1YYYYX"
+ * Domain-specific utilities for Graduate College applications.
+ *
+ * This package provides:
+ * - Term utilities: Parse, format, and work with academic terms
+ * - Program utilities: Parse and work with program codes
+ * - CFOP utilities: Parse and work with C-FOAPAL accounting strings
+ *
+ * These utilities are specific to the Graduate College domain but are
+ * general enough to be used across multiple Graduate College applications.
  */
-export declare function generateTermCode(year: number, month: number): string;
-
-/**
- * Get the Term object for the term that matches the current date.
- *
- * Logic:
- * - Before June: Spring term
- * - June through September: Summer term
- * - October and later: Fall term
- *
- * @returns Term object for current term
- */
-export declare function getCurrentTerm(): Term;
-
-/**
- * Generate a term code that matches the current date.
- */
-export declare function getCurrentTermCode(): string;
-
-/**
- * Converts a month number to the graduation month name.
- *
- * @param month - Month number (1 for Spring, 5 for Summer, 8 for Fall)
- * @returns Graduation month name
- * @throws Error if month is not valid (1, 5, or 8)
- *
- * @example
- * \`\`\`typescript
- * monthToGradMonthName(1) // "May"
- * monthToGradMonthName(5) // "Aug"
- * monthToGradMonthName(8) // "Dec"
- * \`\`\`
- */
-export declare function monthToGradMonthName(month: number): Term["gradMonthName"];
-
-/**
- * Converts a month number to the term name.
- *
- * @param month - Month number (1 for Spring, 5 for Summer, 8 for Fall)
- * @returns Term name
- * @throws Error if month is not valid (1, 5, or 8)
- *
- * @example
- * \`\`\`typescript
- * monthToTermName(1) // "Spring"
- * monthToTermName(5) // "Summer"
- * monthToTermName(8) // "Fall"
- * \`\`\`
- */
-export declare function monthToTermName(month: number): Term["name"];
-
-/**
- * Parse a term code string into a Term object.
- *
- * The term code format is "1YYYYX", where:
- * - "1" is a constant prefix for the Urbana campus
- * - "YYYY" is the 4-digit year
- * - "X" is the term indicator: 1 for Spring, 5 for Summer, and 8 for Fall
- *
- * @param code - Term code to parse (e.g., "120241" for Spring 2024)
- * @param returnDefault - If true, returns the current term if parsing fails
- * @returns Parsed Term object or "Unknown" term if parsing fails
- */
-export declare function parseTermCode(code: string, returnDefault?: boolean): Term;
-
+export { type Term, monthToGradMonthName, monthToTermName, termRegex, parseTermCode, generateTermCode, createTerm, getCurrentTerm, getCurrentTermCode } from './terms.ts';
+export { type ProgramCodeParts, programRegex, splitProgramCode, } from './programs.ts';
+export { type CfopParts, cfopRegex, splitCfop, } from './cfop.ts';
+//# sourceMappingURL=index.d.ts.map
 /**
  * Components of a program code.
  */
-export declare interface ProgramCodeParts {
+export interface ProgramCodeParts {
     /**
      * Campus code (2 characters, e.g., "1U" for Urbana)
      */
@@ -166,7 +106,6 @@ export declare interface ProgramCodeParts {
      */
     programDegree?: string;
 }
-
 /**
  * Regular expression for parsing program codes.
  * Format: (campus)(college)(major)(degree)
@@ -182,15 +121,6 @@ export declare interface ProgramCodeParts {
  * - Degree: "MS"
  */
 export declare const programRegex: RegExp;
-
-/**
- * Validates and splits a C-FOAPAL accounting string into its component parts.
- *
- * @param cfop - The C-FOAPAL string to parse.
- * @returns An object containing the parsed components, or undefined if the string is invalid.
- */
-export declare function splitCfop(cfop: string): CfopParts | undefined;
-
 /**
  * Split a program code into its component parts.
  *
@@ -204,11 +134,13 @@ export declare function splitCfop(cfop: string): CfopParts | undefined;
  * @returns Object containing the parsed components, or empty object if parsing fails
  */
 export declare function splitProgramCode(programCode: string): ProgramCodeParts;
-
+//# sourceMappingURL=programs.d.ts.map
+export {};
+//# sourceMappingURL=programs.test.d.ts.map
 /**
  * An object representing a term in the academic calendar.
  */
-export declare interface Term {
+export interface Term {
     /**
      * Four digit year.
      */
@@ -249,18 +181,87 @@ export declare interface Term {
      */
     shortTermName: string;
 }
-
+/**
+ * Converts a month number to the graduation month name.
+ *
+ * @param month - Month number (1 for Spring, 5 for Summer, 8 for Fall)
+ * @returns Graduation month name
+ * @throws Error if month is not valid (1, 5, or 8)
+ *
+ * @example
+ * \`\`\`typescript
+ * monthToGradMonthName(1) // "May"
+ * monthToGradMonthName(5) // "Aug"
+ * monthToGradMonthName(8) // "Dec"
+ * \`\`\`
+ */
+export declare function monthToGradMonthName(month: number): Term["gradMonthName"];
+/**
+ * Converts a month number to the term name.
+ *
+ * @param month - Month number (1 for Spring, 5 for Summer, 8 for Fall)
+ * @returns Term name
+ * @throws Error if month is not valid (1, 5, or 8)
+ *
+ * @example
+ * \`\`\`typescript
+ * monthToTermName(1) // "Spring"
+ * monthToTermName(5) // "Summer"
+ * monthToTermName(8) // "Fall"
+ * \`\`\`
+ */
+export declare function monthToTermName(month: number): Term["name"];
 /**
  * Regular expression for parsing term codes.
  * Matches format: "1YYYYX" where YYYY is year and X is term indicator (1, 5, or 8)
  */
 export declare const termRegex: RegExp;
-
 /**
- * A composable function that computes a parsed term code from a given term code reference or getter.
+ * Parse a term code string into a Term object.
+ *
+ * The term code format is "1YYYYX", where:
+ * - "1" is a constant prefix for the Urbana campus
+ * - "YYYY" is the 4-digit year
+ * - "X" is the term indicator: 1 for Spring, 5 for Summer, and 8 for Fall
+ *
+ * @param code - Term code to parse (e.g., "120241" for Spring 2024)
+ * @param returnDefault - If true, returns the current term if parsing fails
+ * @returns Parsed Term object or "Unknown" term if parsing fails
  */
-export declare function useTerm(termCode: MaybeRefOrGetter<string>): ComputedRef<Term>;
-
-export { }
-
+export declare function parseTermCode(code: string, returnDefault?: boolean): Term;
+/**
+ * Generate a term code from year and month.
+ *
+ * @param year - Four digit year
+ * @param month - Month number (1, 5, or 8)
+ * @returns Term code string in format "1YYYYX"
+ */
+export declare function generateTermCode(year: number, month: number): string;
+/**
+ * Create a Term object from year and month/name.
+ *
+ * @param year - Four digit year
+ * @param monthInput - Month number (1, 5, 8), term name ("Spring", "Summer", "Fall"), or graduation month ("May", "Aug", "Dec")
+ * @returns Complete Term object
+ * @throws Error if monthInput is invalid
+ */
+export declare function createTerm(year: number, monthInput: number | Term["name"] | Term["gradMonthName"]): Term;
+/**
+ * Get the Term object for the term that matches the current date.
+ *
+ * Logic:
+ * - Before June: Spring term
+ * - June through September: Summer term
+ * - October and later: Fall term
+ *
+ * @returns Term object for current term
+ */
+export declare function getCurrentTerm(): Term;
+/**
+ * Generate a term code that matches the current date.
+ */
+export declare function getCurrentTermCode(): string;
+//# sourceMappingURL=terms.d.ts.map
+export {};
+//# sourceMappingURL=terms.test.d.ts.map
 ```
