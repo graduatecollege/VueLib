@@ -106,7 +106,7 @@ export function usefulApi<R, A extends any[], T extends (...args: A) => Promise<
                     return res;
                 })
                 .catch(async (err) => {
-                    console.error(err);
+                    console.error("usefulApi execute error", err);
                     apiError.trigger(err);
                     error.value = err;
                     return err;

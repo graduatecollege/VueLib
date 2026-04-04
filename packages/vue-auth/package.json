@@ -47,11 +47,11 @@
         "vue-router": ">=4"
     },
     "dependencies": {
-        "@vueuse/core": "^14.2.0"
+        "@vueuse/core": "^14.2.1"
     },
     "devDependencies": {
         "@azure/msal-browser": "^4.27.0",
         "pinia": "^3.0.4",
-        "vue-router": "^5.0.2"
+        "vue-router": "^5.0.4"
     }
 }
