@@ -7,6 +7,7 @@ import { createMsalConfig, type MsalConfig } from "./msal.config.ts";
  * This is used during Playwright tests to bypass the Azure AD authentication.
  */
 export class TestAuth {
+    error = ref<unknown | null>(null);
     account = ref<any>({
         name: "Test User",
         username: "testuser@illinois.edu",
@@ -38,11 +39,21 @@ export class TestAuth {
         return Promise.resolve();
     }
 
+    clearError() {
+        this.error.value = null;
+    }
+
     loginRedirect = (_redirectStartPage?: string) => {
         // No-op for tests - already authenticated
+        this.clearError();
+    };
+
+    retry = (redirectStartPage?: string) => {
+        this.loginRedirect(redirectStartPage);
     };
 
     logout = () => {
+        this.clearError();
         return Promise.resolve();
     };
 

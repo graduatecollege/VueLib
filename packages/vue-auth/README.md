@@ -22,9 +22,11 @@ This package requires the following peer dependencies:
 
 ```json
 {
-  "@azure/msal-browser": "^4.0.0",
+  "@azure/msal-browser": "^5.0.0",
   "pinia": "^3.0.0",
   "vue": "^3.0.0",
   "vue-router": "^4.0.0"
 }
 ```
+
+When upgrading from MSAL Browser v4, note that request-level logout redirect hooks are no longer supported. If you need to intercept redirect navigation in v5, provide `auth.onRedirectNavigate` on the top-level MSAL config instead.

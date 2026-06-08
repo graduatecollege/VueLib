@@ -9,10 +9,10 @@ export interface MsalConfig {
         authority: string;
         redirectUri: string;
         postLogoutRedirectUri: string;
+        onRedirectNavigate?: (url: string) => boolean | void;
     };
     cache: {
         cacheLocation: "localStorage" | "sessionStorage";
-        storeAuthStateInCookie?: boolean;
     };
     system?: {
         loggerOptions?: {

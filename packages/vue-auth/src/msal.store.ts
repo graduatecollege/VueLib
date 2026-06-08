@@ -36,6 +36,10 @@ export const useMsalStore = defineStore("msal", () => {
             return auth.inProgress;
         });
 
+        const error = computed(() => {
+            return auth.error.value;
+        });
+
         const initPromise = auth.initialize();
 
         let accessTokenPromise: Promise<string | null> | null;
@@ -43,6 +47,18 @@ export const useMsalStore = defineStore("msal", () => {
         async function getAccessToken() {
             if (accessToken.value && accessTokenExpires.value > Date.now() + 20000) {
                 return accessToken.value;
+            }
+
+            try {
+                await initPromise;
+            } catch {
+                return null;
+            }
+
+            if (!auth.account.value) {
+                accessToken.value = "";
+                accessTokenExpires.value = 0;
+                return null;
             }
 
             if (accessTokenPromise) {
@@ -96,12 +112,15 @@ export const useMsalStore = defineStore("msal", () => {
             name,
             email,
             netId,
+            error,
             accessToken,
             accessTokenExpires,
             isAuthenticated,
             loading,
             getAccessToken,
             login: auth.loginRedirect,
+            retry: auth.retry,
+            clearError: () => auth.clearError(),
             logout: () => auth.logout(),
             authTokenProvider,
             initial,

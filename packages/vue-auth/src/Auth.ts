@@ -15,6 +15,7 @@ import { Ref, ref, shallowReactive, toRef, watch } from "vue";
 export class Auth {
     accounts: AccountInfo[] = [];
     account: Ref<AccountInfo | null> = ref<AccountInfo | null>(null);
+    error: Ref<unknown | null> = ref(null);
     status: InteractionStatus = InteractionStatus.Startup;
     inProgress: boolean = false;
     ready: boolean = false;
@@ -34,6 +35,11 @@ export class Auth {
         public readonly msalConfig: MsalConfig,
     ) {}
 
+    clearError() {
+        this.error.value = null;
+        this.initializing = undefined;
+    }
+
     async initialize() {
         if (!this.ready) {
             if (!this.initializing) {
@@ -43,36 +49,49 @@ export class Auth {
                         this.accounts = this.msalInstance.getAllAccounts();
                         this.account.value = acc;
                     }
-                    return this.msalInstance.handleRedirectPromise().catch(() => {
-                        // Errors should be handled by listening to the LOGIN_FAILURE event
-                        return;
-                    });
+                    return this.msalInstance.handleRedirectPromise();
                 });
             }
 
-            await this.initializing;
+            try {
+                await this.initializing;
+            } catch (error) {
+                this.error.value = error;
+                this.initializing = undefined;
+                throw error;
+            }
         }
     }
 
     loginRedirect = (redirectStartPage?: string) => {
+        this.clearError();
         this.msalInstance.loginRedirect({
             ...this.msalConfig.loginRequest,
             redirectStartPage,
         });
     };
 
+    retry = (redirectStartPage?: string) => {
+        this.loginRedirect(redirectStartPage);
+    };
+
     logout = () => {
-        return this.msalInstance.logoutRedirect({
-            onRedirectNavigate: (url) => {
-                // Prevent navigation to logout page
-                return false;
-            },
-        });
+        this.clearError();
+        return this.msalInstance.logoutRedirect();
     };
 
     handleRedirect: () => Promise<AuthenticationResult | null> = async () => {
-        return await this.msalInstance.handleRedirectPromise();
+        try {
+            return await this.msalInstance.handleRedirectPromise();
+        } catch (error) {
+            this.error.value = error;
+            throw error;
+        }
     };
+
+    private getTokenAccount(request: SilentRequest) {
+        return request.account ?? this.account.value ?? this.msalInstance.getActiveAccount() ?? this.msalInstance.getAllAccounts()[0] ?? null;
+    }
 
     loadToken(request: SilentRequest) {
         return new Promise<AuthenticationResult>((resolve, reject) => {
@@ -97,23 +116,34 @@ export class Auth {
 
             const acquireToken = async () => {
                 await this.initialize();
+
+                if (this.error.value) {
+                    throw this.error.value;
+                }
+
                 if (this.redirect) {
                     return await this.handleRedirect();
                 }
+
+                const account = this.getTokenAccount(request);
+                if (!account) {
+                    throw new Error("Cannot acquire token without a signed-in account.");
+                }
+
                 try {
-                    const response = await this.msalInstance.acquireTokenSilent(request);
+                    const response = await this.msalInstance.acquireTokenSilent({
+                        ...request,
+                        account,
+                    });
                     return response;
                 } catch (e) {
                     if (e instanceof InteractionRequiredAuthError) {
                         await this.msalInstance.acquireTokenRedirect(request);
                         throw e;
                     }
-                    if (!this.ready) {
-                        return null;
-                    }
 
-                    await this.msalInstance.loginRedirect(request);
-                    console.error("loadToken reached unexpected state");
+                    this.error.value = e;
+                    throw e;
                 }
             };
 
@@ -134,20 +164,30 @@ export class Auth {
     private addEventListeners() {
         this.msalInstance.addEventCallback((event: EventMessage) => {
             if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
+                const account = event.payload as AccountInfo;
+                this.msalInstance.setActiveAccount(account);
+                this.error.value = null;
+            }
+
+            if (event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS && event.payload) {
                 const payload = event.payload as AuthenticationResult;
                 const account = payload.account;
                 this.msalInstance.setActiveAccount(account);
+                this.error.value = null;
+            }
+
+            if (
+                (event.eventType === EventType.ACQUIRE_TOKEN_FAILURE ||
+                    event.eventType === EventType.BROKERED_REQUEST_FAILURE) &&
+                event.error
+            ) {
+                this.error.value = event.error;
             }
 
             switch (event.eventType) {
-                case EventType.ACCOUNT_ADDED:
-                case EventType.ACCOUNT_REMOVED:
                 case EventType.LOGIN_SUCCESS:
-                case EventType.SSO_SILENT_SUCCESS:
+                case EventType.LOGOUT_SUCCESS:
                 case EventType.HANDLE_REDIRECT_END:
-                case EventType.LOGIN_FAILURE:
-                case EventType.SSO_SILENT_FAILURE:
-                case EventType.LOGOUT_END:
                 case EventType.ACQUIRE_TOKEN_SUCCESS:
                 case EventType.ACQUIRE_TOKEN_FAILURE: {
                     const currentAccounts = this.msalInstance.getAllAccounts();
@@ -163,24 +203,22 @@ export class Auth {
 
             if (status !== null) {
                 switch (status) {
-                    case "startup":
+                    case InteractionStatus.Startup:
                         this.inProgress = false;
                         this.ready = false;
                         this.redirect = false;
                         break;
-                    case "login":
-                    case "logout":
-                    case "acquireToken":
-                    case "ssoSilent":
+                    case InteractionStatus.Logout:
+                    case InteractionStatus.AcquireToken:
                         this.inProgress = true;
                         this.ready = false;
                         break;
-                    case "handleRedirect":
+                    case InteractionStatus.HandleRedirect:
                         this.inProgress = true;
                         this.ready = false;
                         this.redirect = true;
                         break;
-                    case "none":
+                    case InteractionStatus.None:
                         this.inProgress = false;
                         this.ready = true;
                         this.redirect = false;
