@@ -269,4 +269,31 @@ describe("Auth", () => {
         expect(auth.redirect).toBe(false);
         expect(auth.status).toBe(InteractionStatus.None);
     });
+
+    it("does not mark initialization complete when redirect handling fails", async () => {
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(null),
+            getAllAccounts: vi.fn().mockReturnValue([]),
+            handleRedirectPromise: vi.fn().mockRejectedValue(new Error("redirect failed")),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        await expect(auth.initialize()).rejects.toThrow("redirect failed");
+
+        expect(auth.ready).toBe(false);
+        expect(auth.status).toBe(InteractionStatus.Startup);
+    });
+
 });

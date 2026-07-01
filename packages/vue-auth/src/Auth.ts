@@ -54,8 +54,6 @@ export class Auth {
                             this.msalInstance.setActiveAccount(response.account);
                         }
                         this.syncAccountsFromCache();
-                    })
-                    .finally(() => {
                         this.finishInitialization();
                     });
             }
@@ -123,7 +121,6 @@ export class Auth {
         } catch (e) {
             if (shouldRecoverWithRedirect(e)) {
                 await this.acquireTokenRedirectOnce(request);
-                throw e;
             }
 
             this.error.value = e;
