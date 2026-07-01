@@ -40,8 +40,6 @@ export const useMsalStore = defineStore("msal", () => {
             return auth.error.value;
         });
 
-        const initPromise = auth.initialize();
-
         let accessTokenPromise: Promise<string | null> | null = null;
 
         async function getAccessToken() {
@@ -50,9 +48,9 @@ export const useMsalStore = defineStore("msal", () => {
             }
 
             try {
-                await initPromise;
-            } catch {
-                return null;
+                await auth.initialize();
+            } catch (error) {
+                throw error;
             }
 
             if (!auth.account.value) {
@@ -127,6 +125,9 @@ export const useMsalStore = defineStore("msal", () => {
             authTokenProvider,
             initial,
             handleRedirect: auth.handleRedirect,
-            initPromise,
+            initialize: () => auth.initialize(),
+            get initPromise() {
+                return auth.initialize();
+            },
         };
 });

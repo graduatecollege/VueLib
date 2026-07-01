@@ -12,7 +12,7 @@ import {
     type SilentRequest,
 } from "@azure/msal-browser";
 import { type MsalConfig } from "./msal.config.ts";
-import { Ref, ref, shallowReactive, toRef, watch } from "vue";
+import { Ref, ref, shallowReactive } from "vue";
 
 export class Auth {
     accounts: AccountInfo[] = [];
@@ -46,14 +46,18 @@ export class Auth {
     async initialize() {
         if (!this.ready) {
             if (!this.initializing) {
-                this.initializing = this.msalInstance.initialize().then(() => {
-                    const acc = this.msalInstance.getActiveAccount();
-                    if (acc) {
-                        this.accounts = this.msalInstance.getAllAccounts();
-                        this.account.value = acc;
-                    }
-                    return this.msalInstance.handleRedirectPromise();
-                });
+                this.initializing = this.msalInstance
+                    .initialize()
+                    .then(() => this.msalInstance.handleRedirectPromise())
+                    .then((response) => {
+                        if (response?.account) {
+                            this.msalInstance.setActiveAccount(response.account);
+                        }
+                        this.syncAccountsFromCache();
+                    })
+                    .finally(() => {
+                        this.finishInitialization();
+                    });
             }
 
             try {
@@ -96,64 +100,35 @@ export class Auth {
         return request.account ?? this.account.value ?? this.msalInstance.getActiveAccount() ?? this.msalInstance.getAllAccounts()[0] ?? null;
     }
 
-    loadToken(request: SilentRequest) {
-        return new Promise<AuthenticationResult>((resolve, reject) => {
-            const execute = () => {
-                acquireToken()
-                    .then((res) => {
-                        if (res) {
-                            stopWatcher();
-                            resolve(res);
-                        }
-                    })
-                    .catch((e) => {
-                        console.warn(e);
-                        stopWatcher();
-                        reject(e);
-                    });
-            };
+    async loadToken(request: SilentRequest) {
+        await this.initialize();
 
-            const stopWatcher = watch(toRef(this.status), (st) => {
-                execute();
+        if (this.error.value) {
+            throw this.error.value;
+        }
+
+        const account = this.getTokenAccount(request);
+        if (!account) {
+            throw new Error("Cannot acquire token without a signed-in account.");
+        }
+
+        try {
+            const response = await this.msalInstance.acquireTokenSilent({
+                ...request,
+                account,
+                redirectUri: this.msalConfig.auth.silentRedirectUri,
             });
+            this.interactiveRecoveryInProgress = false;
+            return response;
+        } catch (e) {
+            if (shouldRecoverWithRedirect(e)) {
+                await this.acquireTokenRedirectOnce(request);
+                throw e;
+            }
 
-            const acquireToken = async () => {
-                await this.initialize();
-
-                if (this.error.value) {
-                    throw this.error.value;
-                }
-
-                if (this.redirect) {
-                    return await this.handleRedirect();
-                }
-
-                const account = this.getTokenAccount(request);
-                if (!account) {
-                    throw new Error("Cannot acquire token without a signed-in account.");
-                }
-
-                try {
-                    const response = await this.msalInstance.acquireTokenSilent({
-                        ...request,
-                        account,
-                        redirectUri: this.msalConfig.auth.silentRedirectUri,
-                    });
-                    this.interactiveRecoveryInProgress = false;
-                    return response;
-                } catch (e) {
-                    if (shouldRecoverWithRedirect(e)) {
-                        await this.acquireTokenRedirectOnce(request);
-                        throw e;
-                    }
-
-                    this.error.value = e;
-                    throw e;
-                }
-            };
-
-            execute();
-        });
+            this.error.value = e;
+            throw e;
+        }
     }
 
     loadGraphToken() {
@@ -234,6 +209,28 @@ export class Auth {
                 this.status = status;
             }
         });
+    }
+
+    private syncAccountsFromCache() {
+        const currentAccounts = this.msalInstance.getAllAccounts();
+        this.accounts = currentAccounts;
+        this.account.value =
+            this.msalInstance.getActiveAccount() ?? currentAccounts[0] ?? null;
+    }
+
+    private finishInitialization() {
+        this.syncAccountsFromCache();
+
+        if (
+            this.status === InteractionStatus.Startup ||
+            this.status === InteractionStatus.HandleRedirect
+        ) {
+            this.status = InteractionStatus.None;
+            this.inProgress = false;
+            this.ready = true;
+            this.redirect = false;
+            this.interactiveRecoveryInProgress = false;
+        }
     }
 
     private async acquireTokenRedirectOnce(request: SilentRequest) {

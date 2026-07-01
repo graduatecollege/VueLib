@@ -5,9 +5,9 @@ import { RouteLocationNormalized, Router } from "vue-router";
  * Your auth store should implement this interface.
  */
 export interface AuthStoreInterface {
-    initPromise: Promise<void>;
+    initialize?: () => Promise<void>;
+    initPromise?: Promise<void>;
     isAuthenticated: boolean;
-    handleRedirect: () => Promise<any>;
     login: (redirectStartPage?: string) => void;
 }
 
@@ -39,11 +39,11 @@ export async function isAuthenticated(
 ): Promise<boolean> {
     try {
         const authStore = getAuthStore();
-        await authStore.initPromise;
-        if (authStore.isAuthenticated) {
-            return true;
+        if (authStore.initialize) {
+            await authStore.initialize();
+        } else if (authStore.initPromise) {
+            await authStore.initPromise;
         }
-        await authStore.handleRedirect();
         if (authStore.isAuthenticated) {
             return true;
         }
