@@ -44,6 +44,6 @@
     "dependencies": {
         "@vueuse/core": "^14.3.0",
         "fast-equals": "^6.0.0",
-        "remeda": "^2.38.0"
+        "remeda": "^2.39.0"
     }
 }
