@@ -1,4 +1,5 @@
 import {
+    BrowserAuthError,
     EventType,
     InteractionRequiredAuthError,
     InteractionStatus,
@@ -95,12 +96,56 @@ describe("Auth", () => {
 
         auth.status = InteractionStatus.None;
         auth.ready = true;
-    auth.account.value = account as any;
+        auth.account.value = account as any;
 
         await expect(auth.loadApiToken()).rejects.toBe(interactionRequired);
 
         expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledTimes(1);
         expect(msalInstance.loginRedirect).not.toHaveBeenCalled();
+    });
+
+    it("falls back to interactive redirect when silent token renewal times out", async () => {
+        const silentTimeout = new BrowserAuthError("timed_out");
+        const account = {
+            homeAccountId: "home-account-id",
+            localAccountId: "local-account-id",
+            username: "user@example.com",
+            tenantId: "tenant-id",
+            environment: "login.microsoftonline.com",
+        };
+
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(account),
+            getAllAccounts: vi.fn().mockReturnValue([account]),
+            handleRedirectPromise: vi.fn().mockResolvedValue(null),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn().mockRejectedValue(silentTimeout),
+            acquireTokenRedirect: vi.fn().mockResolvedValue(undefined),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        auth.status = InteractionStatus.None;
+        auth.ready = true;
+        auth.account.value = account as any;
+
+        await expect(auth.loadApiToken()).rejects.toBe(silentTimeout);
+
+        expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledTimes(1);
+        expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledWith(
+            expect.objectContaining({
+                scopes: ["api://scope"],
+                account,
+            }),
+        );
     });
 
     it("clears terminal errors before an explicit retry", () => {
@@ -162,4 +207,93 @@ describe("Auth", () => {
         expect(acquireTokenSilent).not.toHaveBeenCalled();
         expect(msalInstance.acquireTokenRedirect).not.toHaveBeenCalled();
     });
+
+    it("syncs the active account after redirect handling resolves", async () => {
+        const redirectAccount = {
+            homeAccountId: "redirect-home-account-id",
+            localAccountId: "redirect-local-account-id",
+            username: "redirect@example.com",
+            tenantId: "tenant-id",
+            environment: "login.microsoftonline.com",
+        };
+
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(redirectAccount),
+            getAllAccounts: vi.fn().mockReturnValue([redirectAccount]),
+            handleRedirectPromise: vi.fn().mockResolvedValue({ account: redirectAccount }),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        await auth.initialize();
+
+        expect(msalInstance.setActiveAccount).toHaveBeenCalledWith(redirectAccount);
+        expect(auth.account.value).toEqual(redirectAccount);
+    });
+
+    it("marks initialization complete when redirect promise resolves without events", async () => {
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(null),
+            getAllAccounts: vi.fn().mockReturnValue([]),
+            handleRedirectPromise: vi.fn().mockResolvedValue(null),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        await auth.initialize();
+
+        expect(auth.ready).toBe(true);
+        expect(auth.inProgress).toBe(false);
+        expect(auth.redirect).toBe(false);
+        expect(auth.status).toBe(InteractionStatus.None);
+    });
+
+    it("does not mark initialization complete when redirect handling fails", async () => {
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(null),
+            getAllAccounts: vi.fn().mockReturnValue([]),
+            handleRedirectPromise: vi.fn().mockRejectedValue(new Error("redirect failed")),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        await expect(auth.initialize()).rejects.toThrow("redirect failed");
+
+        expect(auth.ready).toBe(false);
+        expect(auth.status).toBe(InteractionStatus.Startup);
+    });
+
 });
