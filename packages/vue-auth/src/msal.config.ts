@@ -8,6 +8,7 @@ export interface MsalConfig {
         clientId: string;
         authority: string;
         redirectUri: string;
+        silentRedirectUri?: string;
         postLogoutRedirectUri: string;
         onRedirectNavigate?: (url: string) => boolean | void;
     };

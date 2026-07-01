@@ -1,5 +1,7 @@
 import {
     AccountInfo,
+    BrowserAuthError,
+    BrowserAuthErrorCodes,
     type AuthenticationResult,
     type EventMessage,
     EventMessageUtils,
@@ -20,6 +22,7 @@ export class Auth {
     inProgress: boolean = false;
     ready: boolean = false;
     redirect: boolean = false;
+    private interactiveRecoveryInProgress = false;
 
     protected initializing: Promise<any> | undefined = undefined;
 
@@ -134,11 +137,13 @@ export class Auth {
                     const response = await this.msalInstance.acquireTokenSilent({
                         ...request,
                         account,
+                        redirectUri: this.msalConfig.auth.silentRedirectUri,
                     });
+                    this.interactiveRecoveryInProgress = false;
                     return response;
                 } catch (e) {
-                    if (e instanceof InteractionRequiredAuthError) {
-                        await this.msalInstance.acquireTokenRedirect(request);
+                    if (shouldRecoverWithRedirect(e)) {
+                        await this.acquireTokenRedirectOnce(request);
                         throw e;
                     }
 
@@ -207,6 +212,7 @@ export class Auth {
                         this.inProgress = false;
                         this.ready = false;
                         this.redirect = false;
+                        this.interactiveRecoveryInProgress = false;
                         break;
                     case InteractionStatus.Logout:
                     case InteractionStatus.AcquireToken:
@@ -222,10 +228,23 @@ export class Auth {
                         this.inProgress = false;
                         this.ready = true;
                         this.redirect = false;
+                        this.interactiveRecoveryInProgress = false;
                         break;
                 }
                 this.status = status;
             }
+        });
+    }
+
+    private async acquireTokenRedirectOnce(request: SilentRequest) {
+        if (this.inProgress || this.interactiveRecoveryInProgress) {
+            return;
+        }
+
+        this.interactiveRecoveryInProgress = true;
+        await this.msalInstance.acquireTokenRedirect({
+            ...request,
+            account: this.getTokenAccount(request) ?? undefined,
         });
     }
 }
@@ -257,4 +276,21 @@ function accountArraysAreEqual(arrayA: Array<AccountIdentifiers>, arrayB: Array<
             elementA.username === elementB.username
         );
     });
+}
+
+function shouldRecoverWithRedirect(error: unknown) {
+    return error instanceof InteractionRequiredAuthError || isRecoverableSilentAuthError(error);
+}
+
+function isRecoverableSilentAuthError(error: unknown) {
+    if (!(error instanceof BrowserAuthError)) {
+        return false;
+    }
+
+    return new Set([
+        BrowserAuthErrorCodes.timedOut,
+        BrowserAuthErrorCodes.hashEmptyError,
+        BrowserAuthErrorCodes.hashDoesNotContainKnownProperties,
+        BrowserAuthErrorCodes.blockIframeReload,
+    ]).has(error.errorCode);
 }

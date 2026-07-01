@@ -42,7 +42,7 @@ export const useMsalStore = defineStore("msal", () => {
 
         const initPromise = auth.initialize();
 
-        let accessTokenPromise: Promise<string | null> | null;
+        let accessTokenPromise: Promise<string | null> | null = null;
 
         async function getAccessToken() {
             if (accessToken.value && accessTokenExpires.value > Date.now() + 20000) {
@@ -65,7 +65,7 @@ export const useMsalStore = defineStore("msal", () => {
                 return accessTokenPromise;
             }
 
-            accessTokenPromise = new Promise(async (resolve) => {
+            accessTokenPromise = new Promise<string | null>(async (resolve, reject) => {
                 try {
                     const token = await auth.loadApiToken();
 
@@ -77,10 +77,12 @@ export const useMsalStore = defineStore("msal", () => {
                         accessTokenExpires.value = 0;
                     }
                     resolve(accessToken.value);
-                    accessTokenPromise = null;
                 } catch (e) {
                     console.error("Failed to load access token", e);
-                    resolve(null);
+                    accessToken.value = "";
+                    accessTokenExpires.value = 0;
+                    reject(e);
+                } finally {
                     accessTokenPromise = null;
                 }
             });
