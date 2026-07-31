@@ -1,0 +1,15 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/packages/codex"
+      - "/packages/vue-auth"
+      - "/packages/vue-datetime"
+      - "/packages/vue-useful-api"
+    schedule:
+      interval: "weekly"
+    groups:
+      monorepo-dependencies:
+        group-by: dependency-name
