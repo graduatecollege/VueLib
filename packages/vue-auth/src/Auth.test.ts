@@ -105,7 +105,7 @@ describe("Auth", () => {
     });
 
     it("falls back to interactive redirect when silent token renewal times out", async () => {
-        const silentTimeout = new BrowserAuthError("timed_out");
+        const silentTimeout = new BrowserAuthError("timed_out", "");
         const account = {
             homeAccountId: "home-account-id",
             localAccountId: "local-account-id",
