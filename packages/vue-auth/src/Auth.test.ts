@@ -49,6 +49,7 @@ describe("Auth", () => {
                 errorMessage: "bad scope",
                 name: "ServerError",
             },
+            correlationId: "test-correlation-id",
             timestamp: Date.now(),
         } as EventMessage);
 
@@ -102,6 +103,7 @@ describe("Auth", () => {
 
         expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledTimes(1);
         expect(msalInstance.loginRedirect).not.toHaveBeenCalled();
+        expect(auth.error.value).toBeNull();
     });
 
     it("falls back to interactive redirect when silent token renewal times out", async () => {
@@ -146,6 +148,65 @@ describe("Auth", () => {
                 account,
             }),
         );
+        expect(auth.error.value).toBeNull();
+    });
+
+    it("does not latch recoverable token failures from MSAL events", async () => {
+        let callback: EventCallbackFunction | undefined;
+        const interactionRequired = new InteractionRequiredAuthError(
+            "interaction_required",
+            "interaction required",
+        );
+        const account = {
+            homeAccountId: "home-account-id",
+            localAccountId: "local-account-id",
+            username: "user@example.com",
+            tenantId: "tenant-id",
+            environment: "login.microsoftonline.com",
+        };
+
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(account),
+            getAllAccounts: vi.fn().mockReturnValue([account]),
+            handleRedirectPromise: vi.fn().mockResolvedValue(null),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn().mockRejectedValue(interactionRequired),
+            acquireTokenRedirect: vi.fn().mockResolvedValue(undefined),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn((cb: EventCallbackFunction) => {
+                callback = cb;
+                return null;
+            }),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        auth.status = InteractionStatus.None;
+        auth.ready = true;
+        auth.account.value = account as any;
+
+        callback?.({
+            eventType: EventType.ACQUIRE_TOKEN_FAILURE,
+            interactionType: null,
+            payload: null,
+            error: interactionRequired,
+            correlationId: "test-correlation-id",
+            timestamp: Date.now(),
+        } as EventMessage);
+
+        expect(auth.error.value).toBeNull();
+
+        await expect(auth.loadApiToken()).rejects.toBe(interactionRequired);
+
+        expect(msalInstance.acquireTokenSilent).toHaveBeenCalledTimes(1);
+        expect(msalInstance.acquireTokenRedirect).toHaveBeenCalledTimes(1);
+        expect(auth.error.value).toBeNull();
     });
 
     it("clears terminal errors before an explicit retry", () => {

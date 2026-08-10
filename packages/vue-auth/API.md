@@ -12,21 +12,29 @@ export declare class Auth {
     readonly msalConfig: MsalConfig;
     accounts: AccountInfo[];
     account: Ref<AccountInfo | null>;
+    error: Ref<unknown | null>;
     status: InteractionStatus;
     inProgress: boolean;
     ready: boolean;
     redirect: boolean;
+    private interactiveRecoveryInProgress;
     protected initializing: Promise<any> | undefined;
     static create(apiAccessScope: string, msalInstance: PublicClientApplication, msalConfig: MsalConfig): import('vue').ShallowReactive<Auth>;
     private constructor();
+    clearError(): void;
     initialize(): Promise<void>;
     loginRedirect: (redirectStartPage?: string) => void;
+    retry: (redirectStartPage?: string) => void;
     logout: () => Promise<void>;
     handleRedirect: () => Promise<AuthenticationResult | null>;
+    private getTokenAccount;
     loadToken(request: SilentRequest): Promise<AuthenticationResult>;
     loadGraphToken(): Promise<AuthenticationResult>;
     loadApiToken(): Promise<AuthenticationResult>;
     private addEventListeners;
+    private syncAccountsFromCache;
+    private finishInitialization;
+    private acquireTokenRedirectOnce;
 }
 //# sourceMappingURL=Auth.d.ts.map
 import { Router } from 'vue-router';
@@ -35,9 +43,9 @@ import { Router } from 'vue-router';
  * Your auth store should implement this interface.
  */
 export interface AuthStoreInterface {
-    initPromise: Promise<void>;
+    initialize?: () => Promise<void>;
+    initPromise?: Promise<void>;
     isAuthenticated: boolean;
-    handleRedirect: () => Promise<any>;
     login: (redirectStartPage?: string) => void;
 }
 /**
@@ -54,6 +62,10 @@ export declare function registerAuthGuard(router: Router, getAuthStore: () => Au
  */
 export declare function isAuthenticated(getAuthStore: () => AuthStoreInterface, redirectStartPage?: string): Promise<boolean>;
 //# sourceMappingURL=authGuard.d.ts.map
+export {};
+//# sourceMappingURL=authGuard.test.d.ts.map
+export {};
+//# sourceMappingURL=Auth.test.d.ts.map
 /**
  * Generates a deterministic color for a user based on their netID.
  * Useful for displaying user avatars with consistent colors.
@@ -100,11 +112,12 @@ export interface MsalConfig {
         clientId: string;
         authority: string;
         redirectUri: string;
+        silentRedirectUri?: string;
         postLogoutRedirectUri: string;
+        onRedirectNavigate?: (url: string) => boolean | void;
     };
     cache: {
         cacheLocation: "localStorage" | "sessionStorage";
-        storeAuthStateInCookie?: boolean;
     };
     system?: {
         loggerOptions?: {
@@ -130,8 +143,10 @@ export interface MsalConfig {
  * @param additionalScopes - Additional scopes beyond User.Read
  * @returns Complete MSAL configuration
  */
-export declare function createMsalConfig(clientId: string, authority: string, apiAccessScope: string, allowedHosts: string[], additionalScopes?: string[]): MsalConfig;
+export declare function createMsalConfig(clientId: string, authority: string, apiAccessScope: string, allowedHosts: string[], additionalScopes?: string[], cacheLocation?: "localStorage" | "sessionStorage"): MsalConfig;
 //# sourceMappingURL=msal.config.d.ts.map
+export {};
+//# sourceMappingURL=msal.config.test.d.ts.map
 import { App } from 'vue';
 import { Router } from 'vue-router';
 import { MsalConfig } from './msal.config.ts';
@@ -142,52 +157,26 @@ export declare const msalPlugin: {
     install: (app: App, apiAccessScope: string, msalConfig: MsalConfig, router: Router) => void;
 };
 //# sourceMappingURL=msalPlugin.d.ts.map
-export declare const useMsalStore: import('pinia').StoreDefinition<"msal", Pick<{
+export declare const useMsalStore: import('pinia').SetupStoreDefinition<"msal", {
     name: import('vue').Ref<string, string>;
     email: import('vue').Ref<string, string>;
     netId: import('vue').ComputedRef<string>;
+    error: import('vue').ComputedRef<unknown>;
     accessToken: import('vue').Ref<string, string>;
     accessTokenExpires: import('vue').Ref<number, number>;
     isAuthenticated: import('vue').Ref<boolean, boolean>;
     loading: import('vue').ComputedRef<boolean>;
     getAccessToken: () => Promise<string | null>;
     login: (redirectStartPage?: string) => void;
+    retry: (redirectStartPage?: string) => void;
+    clearError: () => void;
     logout: () => Promise<void>;
     authTokenProvider: (url: string) => Promise<string | null>;
     initial: import('vue').ComputedRef<string>;
     handleRedirect: () => Promise<import('@azure/msal-browser').AuthenticationResult | null>;
-    initPromise: Promise<void>;
-}, "name" | "email" | "accessToken" | "accessTokenExpires" | "isAuthenticated" | "initPromise">, Pick<{
-    name: import('vue').Ref<string, string>;
-    email: import('vue').Ref<string, string>;
-    netId: import('vue').ComputedRef<string>;
-    accessToken: import('vue').Ref<string, string>;
-    accessTokenExpires: import('vue').Ref<number, number>;
-    isAuthenticated: import('vue').Ref<boolean, boolean>;
-    loading: import('vue').ComputedRef<boolean>;
-    getAccessToken: () => Promise<string | null>;
-    login: (redirectStartPage?: string) => void;
-    logout: () => Promise<void>;
-    authTokenProvider: (url: string) => Promise<string | null>;
-    initial: import('vue').ComputedRef<string>;
-    handleRedirect: () => Promise<import('@azure/msal-browser').AuthenticationResult | null>;
-    initPromise: Promise<void>;
-}, "netId" | "loading" | "initial">, Pick<{
-    name: import('vue').Ref<string, string>;
-    email: import('vue').Ref<string, string>;
-    netId: import('vue').ComputedRef<string>;
-    accessToken: import('vue').Ref<string, string>;
-    accessTokenExpires: import('vue').Ref<number, number>;
-    isAuthenticated: import('vue').Ref<boolean, boolean>;
-    loading: import('vue').ComputedRef<boolean>;
-    getAccessToken: () => Promise<string | null>;
-    login: (redirectStartPage?: string) => void;
-    logout: () => Promise<void>;
-    authTokenProvider: (url: string) => Promise<string | null>;
-    initial: import('vue').ComputedRef<string>;
-    handleRedirect: () => Promise<import('@azure/msal-browser').AuthenticationResult | null>;
-    initPromise: Promise<void>;
-}, "login" | "logout" | "handleRedirect" | "getAccessToken" | "authTokenProvider">>;
+    initialize: () => Promise<void>;
+    readonly initPromise: Promise<void>;
+}>;
 //# sourceMappingURL=msal.store.d.ts.map
 import { NavigationClient, NavigationOptions } from '@azure/msal-browser';
 import { Router } from 'vue-router';
@@ -216,6 +205,7 @@ import { MsalConfig } from './msal.config.ts';
  */
 export declare class TestAuth {
     readonly msalConfig: MsalConfig;
+    error: import('vue').Ref<unknown, unknown>;
     account: import('vue').Ref<any, any>;
     accounts: {
         name: string;
@@ -230,7 +220,9 @@ export declare class TestAuth {
     redirect: boolean;
     constructor(msalConfig: MsalConfig);
     initialize(): Promise<void>;
+    clearError(): void;
     loginRedirect: (_redirectStartPage?: string) => void;
+    retry: (redirectStartPage?: string) => void;
     logout: () => Promise<void>;
     handleRedirect: () => Promise<null>;
     loadToken(_request: any): Promise<{

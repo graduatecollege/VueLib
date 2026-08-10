@@ -120,7 +120,9 @@ export class Auth {
             return response;
         } catch (e) {
             if (shouldRecoverWithRedirect(e)) {
+                this.error.value = null;
                 await this.acquireTokenRedirectOnce(request);
+                throw e;
             }
 
             this.error.value = e;
@@ -156,7 +158,8 @@ export class Auth {
             if (
                 (event.eventType === EventType.ACQUIRE_TOKEN_FAILURE ||
                     event.eventType === EventType.BROKERED_REQUEST_FAILURE) &&
-                event.error
+                event.error &&
+                !shouldRecoverWithRedirect(event.error)
             ) {
                 this.error.value = event.error;
             }
