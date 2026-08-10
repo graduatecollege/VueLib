@@ -38,6 +38,7 @@ export interface MsalConfig {
  * @param apiAccessScope - API access scope for authentication
  * @param allowedHosts - List of allowed hosts for API access
  * @param additionalScopes - Additional scopes beyond User.Read
+ * @param cacheLocation - Cache location for MSAL
  * @returns Complete MSAL configuration
  */
 export function createMsalConfig(

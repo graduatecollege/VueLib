@@ -54,6 +54,8 @@ export class TestAuth {
 
     logout = () => {
         this.clearError();
+        this.accounts = [];
+        this.account.value = null;
         return Promise.resolve();
     };
 
