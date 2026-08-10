@@ -80,6 +80,21 @@ export class Auth {
         this.loginRedirect(redirectStartPage);
     };
 
+    clearCacheAndLoginRedirect = async (redirectStartPage?: string) => {
+        this.clearError();
+
+        try {
+            await this.msalInstance.clearCache();
+        } catch (error) {
+            this.error.value = error;
+            throw error;
+        }
+
+        this.syncAccountsFromCache();
+        this.interactiveRecoveryInProgress = false;
+        this.loginRedirect(redirectStartPage);
+    };
+
     logout = () => {
         this.clearError();
         return this.msalInstance.logoutRedirect();

@@ -243,6 +243,59 @@ describe("Auth", () => {
         );
     });
 
+    it("clears the local MSAL cache before re-authenticating", async () => {
+        const account = {
+            homeAccountId: "home-account-id",
+            localAccountId: "local-account-id",
+            username: "user@example.com",
+            tenantId: "tenant-id",
+            environment: "login.microsoftonline.com",
+        };
+        let cachedAccounts: typeof account[] = [account];
+        let activeAccount: typeof account | null = account;
+        const clearCache = vi.fn().mockImplementation(async () => {
+            cachedAccounts = [];
+            activeAccount = null;
+        });
+        const loginRedirect = vi.fn();
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn(() => activeAccount),
+            getAllAccounts: vi.fn(() => cachedAccounts),
+            handleRedirectPromise: vi.fn().mockResolvedValue(null),
+            loginRedirect,
+            logoutRedirect: vi.fn(),
+            clearCache,
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        auth.error.value = new Error("stale auth");
+        auth.account.value = account as any;
+        auth.accounts = [account as any];
+
+        await auth.clearCacheAndLoginRedirect("/dashboard");
+
+        expect(clearCache).toHaveBeenCalledTimes(1);
+        expect(auth.error.value).toBeNull();
+        expect(auth.account.value).toBeNull();
+        expect(auth.accounts).toEqual([]);
+        expect(loginRedirect).toHaveBeenCalledWith(
+            expect.objectContaining({
+                scopes: ["User.Read"],
+                redirectStartPage: "/dashboard",
+            }),
+        );
+    });
+
     it("fails fast before silent token acquisition when no account is signed in", async () => {
         const acquireTokenSilent = vi.fn();
         const msalInstance = {

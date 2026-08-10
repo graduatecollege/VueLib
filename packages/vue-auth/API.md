@@ -25,6 +25,7 @@ export declare class Auth {
     initialize(): Promise<void>;
     loginRedirect: (redirectStartPage?: string) => void;
     retry: (redirectStartPage?: string) => void;
+    clearCacheAndLoginRedirect: (redirectStartPage?: string) => Promise<void>;
     logout: () => Promise<void>;
     handleRedirect: () => Promise<AuthenticationResult | null>;
     private getTokenAccount;
@@ -141,6 +142,7 @@ export interface MsalConfig {
  * @param apiAccessScope - API access scope for authentication
  * @param allowedHosts - List of allowed hosts for API access
  * @param additionalScopes - Additional scopes beyond User.Read
+ * @param cacheLocation - Cache location for MSAL
  * @returns Complete MSAL configuration
  */
 export declare function createMsalConfig(clientId: string, authority: string, apiAccessScope: string, allowedHosts: string[], additionalScopes?: string[], cacheLocation?: "localStorage" | "sessionStorage"): MsalConfig;
@@ -169,6 +171,7 @@ export declare const useMsalStore: import('pinia').SetupStoreDefinition<"msal", 
     getAccessToken: () => Promise<string | null>;
     login: (redirectStartPage?: string) => void;
     retry: (redirectStartPage?: string) => void;
+    clearCacheAndLoginRedirect: (redirectStartPage?: string) => Promise<void>;
     clearError: () => void;
     logout: () => Promise<void>;
     authTokenProvider: (url: string) => Promise<string | null>;
@@ -223,6 +226,7 @@ export declare class TestAuth {
     clearError(): void;
     loginRedirect: (_redirectStartPage?: string) => void;
     retry: (redirectStartPage?: string) => void;
+    clearCacheAndLoginRedirect: (redirectStartPage?: string) => Promise<void>;
     logout: () => Promise<void>;
     handleRedirect: () => Promise<null>;
     loadToken(_request: any): Promise<{

@@ -52,6 +52,11 @@ export class TestAuth {
         this.loginRedirect(redirectStartPage);
     };
 
+    clearCacheAndLoginRedirect = async (redirectStartPage?: string) => {
+        this.clearError();
+        this.loginRedirect(redirectStartPage);
+    };
+
     logout = () => {
         this.clearError();
         this.accounts = [];
