@@ -52,6 +52,10 @@ export class TestAuth {
         this.loginRedirect(redirectStartPage);
     };
 
+    get manualRecoveryRequired() {
+        return false;
+    }
+
     clearCacheAndLoginRedirect = async (redirectStartPage?: string) => {
         this.clearError();
         this.loginRedirect(redirectStartPage);

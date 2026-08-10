@@ -80,6 +80,10 @@ export class Auth {
         this.loginRedirect(redirectStartPage);
     };
 
+    get manualRecoveryRequired() {
+        return isManualRecoveryError(this.error.value);
+    };
+
     clearCacheAndLoginRedirect = async (redirectStartPage?: string) => {
         this.clearError();
 
@@ -304,5 +308,20 @@ function isRecoverableSilentAuthError(error: unknown) {
         BrowserAuthErrorCodes.hashEmptyError,
         BrowserAuthErrorCodes.hashDoesNotContainKnownProperties,
         BrowserAuthErrorCodes.blockIframeReload,
+    ]).has(error.errorCode);
+}
+
+function isManualRecoveryError(error: unknown) {
+    if (!(error instanceof BrowserAuthError)) {
+        return false;
+    }
+
+    return new Set([
+        BrowserAuthErrorCodes.cryptoKeyNotFound,
+        BrowserAuthErrorCodes.unableToLoadToken,
+        BrowserAuthErrorCodes.noTokenRequestCacheError,
+        BrowserAuthErrorCodes.unableToParseTokenRequestCacheError,
+        BrowserAuthErrorCodes.invalidCacheType,
+        BrowserAuthErrorCodes.databaseNotOpen,
     ]).has(error.errorCode);
 }

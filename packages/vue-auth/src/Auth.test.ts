@@ -296,6 +296,53 @@ describe("Auth", () => {
         );
     });
 
+    it("identifies when manual recovery is required", async () => {
+        const corruptedStateError = new BrowserAuthError("unable_to_load_token", "");
+        const interactionRequired = new InteractionRequiredAuthError(
+            "interaction_required",
+            "interaction required",
+        );
+        const account = {
+            homeAccountId: "home-account-id",
+            localAccountId: "local-account-id",
+            username: "user@example.com",
+            tenantId: "tenant-id",
+            environment: "login.microsoftonline.com",
+        };
+
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(account),
+            getAllAccounts: vi.fn().mockReturnValue([account]),
+            handleRedirectPromise: vi.fn().mockResolvedValue(null),
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            clearCache: vi.fn(),
+            acquireTokenSilent: vi.fn().mockRejectedValue(corruptedStateError),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+
+        auth.status = InteractionStatus.None;
+        auth.ready = true;
+        auth.account.value = account as any;
+
+        await expect(auth.loadApiToken()).rejects.toBe(corruptedStateError);
+
+        expect(auth.error.value).toBe(corruptedStateError);
+        expect(auth.manualRecoveryRequired).toBe(true);
+        expect(auth.manualRecoveryRequired).toBe(true);
+        auth.error.value = interactionRequired;
+        expect(auth.manualRecoveryRequired).toBe(false);
+    });
+
     it("fails fast before silent token acquisition when no account is signed in", async () => {
         const acquireTokenSilent = vi.fn();
         const msalInstance = {

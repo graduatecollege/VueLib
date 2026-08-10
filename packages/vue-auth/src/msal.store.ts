@@ -40,6 +40,10 @@ export const useMsalStore = defineStore("msal", () => {
             return auth.error.value;
         });
 
+        const manualRecoveryRequired = computed(() => {
+            return auth.manualRecoveryRequired;
+        });
+
         let accessTokenPromise: Promise<string | null> | null = null;
 
         async function getAccessToken() {
@@ -113,6 +117,7 @@ export const useMsalStore = defineStore("msal", () => {
             email,
             netId,
             error,
+            manualRecoveryRequired,
             accessToken,
             accessTokenExpires,
             isAuthenticated,
