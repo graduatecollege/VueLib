@@ -46,6 +46,7 @@ export function createMsalConfig(
     apiAccessScope: string,
     allowedHosts: string[],
     additionalScopes: string[] = [],
+    cacheLocation: "localStorage" | "sessionStorage" = "sessionStorage",
 ): MsalConfig {
     return {
         auth: {
@@ -55,7 +56,7 @@ export function createMsalConfig(
             postLogoutRedirectUri: "/",
         },
         cache: {
-            cacheLocation: "localStorage",
+            cacheLocation,
         },
         system: {
             loggerOptions: {
