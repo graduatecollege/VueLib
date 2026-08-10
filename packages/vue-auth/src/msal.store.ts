@@ -120,6 +120,7 @@ export const useMsalStore = defineStore("msal", () => {
             getAccessToken,
             login: auth.loginRedirect,
             retry: auth.retry,
+            clearCacheAndLoginRedirect: auth.clearCacheAndLoginRedirect,
             clearError: () => auth.clearError(),
             logout: () => auth.logout(),
             authTokenProvider,

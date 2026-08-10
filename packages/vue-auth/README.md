@@ -30,3 +30,5 @@ This package requires the following peer dependencies:
 ```
 
 When upgrading from MSAL Browser v4, note that request-level logout redirect hooks are no longer supported. If you need to intercept redirect navigation in v5, provide `auth.onRedirectNavigate` on the top-level MSAL config instead.
+
+When calling code needs a manual recovery path for corrupted local auth state, call `auth.clearCacheAndLoginRedirect()`. It clears the local MSAL cache, resets the cached account state, and starts a fresh login redirect.
