@@ -50,7 +50,7 @@
         "@vueuse/core": "^14.4.0"
     },
     "devDependencies": {
-        "@azure/msal-browser": "^5.17.3",
+        "@azure/msal-browser": "^5.18.0",
         "pinia": "^4.0.2",
         "vue-router": "^5.2.0"
     }
