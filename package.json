@@ -32,8 +32,8 @@
         "prettier": "^3.9.6",
         "typescript": "6.0.3",
         "vite": "^8.2.2",
-        "unplugin-dts": "^1.0.3",
+        "unplugin-dts": "^1.1.0",
         "vitest": "^4.1.11",
-        "vue": "^3.5.41"
+        "vue": "^3.5.42"
     }
 }
