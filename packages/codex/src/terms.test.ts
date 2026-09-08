@@ -136,8 +136,9 @@ describe("getCurrentTerm / getCurrentTermCode", () => {
     it.each([
         { at: new Date(2026, 4, 1, 12, 0, 0), expected: "Spring" as const },
         { at: new Date(2026, 5, 1, 12, 0, 0), expected: "Summer" as const },
-        { at: new Date(2026, 8, 30, 12, 0, 0), expected: "Summer" as const },
-        { at: new Date(2026, 9, 1, 12, 0, 0), expected: "Fall" as const },
+        // These are 0-indexed months in JavaScript (July is 6, August is 7, September is 8)
+        { at: new Date(2026, 7, 30, 12, 0, 0), expected: "Summer" as const },
+        { at: new Date(2026, 8, 1, 12, 0, 0), expected: "Fall" as const },
     ])("at $at -> $expected", ({ at, expected }) => {
         vi.useFakeTimers();
         vi.setSystemTime(at);
