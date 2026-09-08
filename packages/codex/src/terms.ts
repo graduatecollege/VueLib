@@ -260,7 +260,7 @@ export function getCurrentTerm(): Term {
     let month;
     if (nowMonth < 6) {
         month = 1; // Spring
-    } else if (nowMonth >= 6 && nowMonth <= 9) {
+    } else if (nowMonth >= 6 && nowMonth <= 8) {
         month = 5; // Summer
     } else {
         month = 8; // Fall
