@@ -23,7 +23,6 @@ export {
     createTerm,
     getCurrentTerm,
     getCurrentTermCode,
-    useTerm,
 } from "./terms.ts";
 
 // Program utilities
