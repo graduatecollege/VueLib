@@ -403,6 +403,32 @@ describe("Auth", () => {
         expect(auth.account.value).toEqual(redirectAccount);
     });
 
+    it("handles a redirect hash captured before router initialization", async () => {
+        const handleRedirectPromise = vi.fn().mockResolvedValue(null);
+        const msalInstance = {
+            initialize: vi.fn().mockResolvedValue(undefined),
+            getActiveAccount: vi.fn().mockReturnValue(null),
+            getAllAccounts: vi.fn().mockReturnValue([]),
+            handleRedirectPromise,
+            loginRedirect: vi.fn(),
+            logoutRedirect: vi.fn(),
+            acquireTokenSilent: vi.fn(),
+            acquireTokenRedirect: vi.fn(),
+            setActiveAccount: vi.fn(),
+            addEventCallback: vi.fn(),
+        };
+        const auth = Auth.create(
+            "api://scope",
+            msalInstance as any,
+            createMsalConfig("client-id", "tenant-id", "api://scope", ["example.com"]),
+        );
+        const redirectHash = "#code=authorization-code&state=redirect-state";
+
+        await auth.initialize(redirectHash);
+
+        expect(handleRedirectPromise).toHaveBeenCalledWith({ hash: redirectHash });
+    });
+
     it("marks initialization complete when redirect promise resolves without events", async () => {
         const msalInstance = {
             initialize: vi.fn().mockResolvedValue(undefined),

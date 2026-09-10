@@ -43,12 +43,16 @@ export class Auth {
         this.initializing = undefined;
     }
 
-    async initialize() {
+    async initialize(redirectHash?: string) {
         if (!this.ready) {
             if (!this.initializing) {
                 this.initializing = this.msalInstance
                     .initialize()
-                    .then(() => this.msalInstance.handleRedirectPromise())
+                    .then(() =>
+                        this.msalInstance.handleRedirectPromise(
+                            redirectHash ? { hash: redirectHash } : undefined,
+                        ),
+                    )
                     .then((response) => {
                         if (response?.account) {
                             this.msalInstance.setActiveAccount(response.account);
