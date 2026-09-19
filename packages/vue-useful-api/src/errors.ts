@@ -69,10 +69,17 @@ export function getApiErrorMessage(error: unknown): string {
         if (typeof error.context === "string") {
             return error.context;
         }
-        if (typeof error.context === "object" && "message" in error.context) {
-            return error.context.message;
+        if (error.context !== null && typeof error.context === "object") {
+            if ("detail" in error.context && typeof error.context.detail === "string") {
+                return error.context.detail;
+            }
+            if ("message" in error.context && typeof error.context.message === "string") {
+                return error.context.message;
+            }
         }
         statusCode = error.statusCode;
+    } else if (error !== null && typeof error === "object" && "detail" in error && typeof error.detail === "string") {
+        return error.detail;
     } else if (isApiErrorResponse(error)) {
         statusCode = error.statusCode;
     } else if (isErrorResponseObject(error)) {

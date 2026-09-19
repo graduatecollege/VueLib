@@ -107,6 +107,11 @@ describe('getApiErrorMessage', () => {
             expect(getApiErrorMessage(err)).toBe('Object context message');
         });
 
+        it('returns context.detail when context is an object with a detail field', () => {
+            const err = new ApiError('Oops', 400, { detail: 'Detailed context message' });
+            expect(getApiErrorMessage(err)).toBe('Detailed context message');
+        });
+
         it.each([
             { statusCode: 400, expected: 'Bad request. Contact the Graduate College.' },
             { statusCode: 401, expected: 'Unauthorized. Please log in and try again.' },
@@ -143,6 +148,14 @@ describe('getApiErrorMessage', () => {
         ])('maps error "$error" -> "$expected"', ({ error, expected }) => {
             const err: ErrorResponseObject = { error, message: 'error' };
             expect(getApiErrorMessage(err)).toBe(expected);
+        });
+    });
+
+    describe('detail response', () => {
+        it('returns the detail from a newer API error response', () => {
+            expect(getApiErrorMessage({ detail: 'Value is incompatible with the target field.' })).toBe(
+                'Value is incompatible with the target field.',
+            );
         });
     });
 
