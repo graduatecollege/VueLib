@@ -51,7 +51,7 @@
     },
     "devDependencies": {
         "@azure/msal-browser": "^5.25.0",
-        "pinia": "^4.0.3",
+        "pinia": "^4.1.0",
         "vue-router": "^5.4.0"
     }
 }
