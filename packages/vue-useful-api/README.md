@@ -8,6 +8,7 @@ Vue 3 API integration utilities with reactive state management for Graduate Coll
 - **Event Hooks** - onSuccess, onError, and onFinally callbacks
 - **Request Deduplication** - Ignores stale responses automatically
 - **Auto-execution** - apiWatch composable for reactive API calls
+- **Visible Polling** - useVisiblePolling pauses recurring calls in hidden tabs
 - **Error Handling** - User-friendly error messages with type guards
 - **Type Safe** - Written in TypeScript with full type definitions
 
@@ -77,3 +78,26 @@ me.onError((error) => {
 // The loading state is also reactive
 me.isLoading.value // false if finished
 ```
+
+### Polling While the Tab Is Visible
+
+`useVisiblePolling` calls a function on an interval, but only while the browser tab
+is visible. Polling pauses while the tab is hidden and calls the function right away
+when the user returns, so data is fresh without wasting requests in background tabs:
+
+```typescript
+import { useVisiblePolling } from '@illinois-grad/vue-useful-api'
+
+// Reload comments every 5 seconds while the tab is visible
+useVisiblePolling(() => {
+    if (!comments.isLoading.value) {
+        comments.execute()
+    }
+}, 5000)
+```
+
+Callbacks are not awaited. The loading guard skips polls while a request is pending,
+so slow responses are not continually superseded and discarded by `usefulApi`.
+
+Like other composables, call it from a component's `setup`, a Pinia setup store, or an
+effect scope; polling stops when that is disposed.

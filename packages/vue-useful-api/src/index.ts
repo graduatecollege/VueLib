@@ -8,6 +8,8 @@ export {
 
 export { apiWatch } from './apiWatch.ts';
 
+export { useVisiblePolling } from './useVisiblePolling.ts';
+
 export { ErrorHandler } from './ErrorHandler.ts';
 
 export {
