@@ -8,7 +8,62 @@ import {
     monthToGradMonthName,
     monthToTermName,
     parseTermCode,
+    termRegex,
+    type Term,
 } from './terms.ts';
+
+const historicalTerms: Term[] = [
+    {
+        year: 2018,
+        month: 0,
+        name: 'Winter',
+        gradMonthName: 'Unknown',
+        code: '120180',
+        academicYear: '2017-2018',
+        termName: 'Winter 2018',
+        shortTermName: 'WI 18',
+    },
+    {
+        year: 2018,
+        month: 6,
+        name: 'Summer2',
+        gradMonthName: 'Aug',
+        code: '120186',
+        academicYear: '2017-2018',
+        termName: 'Summer2 2018',
+        shortTermName: 'SU2 18',
+    },
+    {
+        year: 2018,
+        month: 2,
+        name: 'Spring (Global Campus)',
+        gradMonthName: 'May',
+        code: '120182',
+        academicYear: '2017-2018',
+        termName: 'Spring (Global Campus) 2018',
+        shortTermName: 'SP GC 18',
+    },
+    {
+        year: 2018,
+        month: 9,
+        name: 'Fall (Global Campus)',
+        gradMonthName: 'Dec',
+        code: '120189',
+        academicYear: '2018-2019',
+        termName: 'Fall (Global Campus) 2018',
+        shortTermName: 'FA GC 18',
+    },
+    {
+        year: 2015,
+        month: 7,
+        name: 'Academic Year',
+        gradMonthName: 'Unknown',
+        code: '120157',
+        academicYear: '2014-2015',
+        termName: 'Academic Year 2014-2015',
+        shortTermName: 'AY 14-15',
+    },
+];
 
 describe('term helpers', () => {
     it.each([
@@ -20,7 +75,7 @@ describe('term helpers', () => {
     });
 
     it('monthToTermName throws on invalid month', () => {
-        expect(() => monthToTermName(0)).toThrow('Invalid month number');
+        expect(() => monthToTermName(3)).toThrow('Invalid month number');
     });
 
     it.each([
@@ -34,9 +89,29 @@ describe('term helpers', () => {
     it('monthToGradMonthName throws on invalid month', () => {
         expect(() => monthToGradMonthName(12)).toThrow('Invalid month number');
     });
+
+    it.each(historicalTerms)('maps historical indicator $month', ({ month, name, gradMonthName }) => {
+        expect(monthToTermName(month)).toBe(name);
+        expect(monthToGradMonthName(month)).toBe(gradMonthName);
+    });
+});
+
+describe('termRegex', () => {
+    it.each([0, 1, 2, 5, 6, 7, 8, 9])('accepts indicator %i', (indicator) => {
+        expect(termRegex.exec(`12018${indicator}`)?.slice(1)).toEqual(['2018', `${indicator}`]);
+    });
+
+    it.each(['120183', '120184', '220180', '12018', '1201800', '1201a0'])('rejects %s', (code) => {
+        expect(termRegex.test(code)).toBe(false);
+    });
 });
 
 describe('parseTermCode', () => {
+    it.each(historicalTerms)('parses historical code $code', (expected) => {
+        expect(parseTermCode(expected.code)).toEqual(expected);
+        expect(parseTermCode(expected.code, true)).toEqual(expected);
+    });
+
     it.each([
         {
             code: '120241',
@@ -66,11 +141,15 @@ describe('parseTermCode', () => {
         expect(parseTermCode(code)).toMatchObject(expected);
     });
 
-    it('returns an Unknown term when parsing fails', () => {
-        expect(parseTermCode('not-a-term')).toMatchObject({
+    it.each(['not-a-term', '120183', '120184'])('returns an Unknown term for %s', (code) => {
+        expect(parseTermCode(code)).toMatchObject({
             name: 'Unknown',
             code: 'Unknown',
         });
+    });
+
+    it('preserves the original code when the year has leading zeros', () => {
+        expect(parseTermCode('100010').code).toBe('100010');
     });
 
     it('can return the current term when parsing fails and returnDefault=true', () => {
@@ -95,6 +174,19 @@ describe('generateTermCode', () => {
 });
 
 describe('createTerm', () => {
+    it.each(historicalTerms)('creates historical term $code by indicator and name', (expected) => {
+        expect(createTerm(expected.year, expected.month)).toEqual(expected);
+        expect(createTerm(expected.year, expected.name)).toEqual(expected);
+    });
+
+    it('formats an academic year spanning a century', () => {
+        expect(createTerm(2000, 'Academic Year')).toMatchObject({
+            academicYear: '1999-2000',
+            termName: 'Academic Year 1999-2000',
+            shortTermName: 'AY 99-00',
+        });
+    });
+
     it.each([
         {
             year: 2024,
@@ -127,8 +219,10 @@ describe('createTerm', () => {
 
     it('throws for invalid inputs', () => {
         // @ts-expect-error runtime validation
-        expect(() => createTerm(2024, 'Winter')).toThrow('Invalid term name');
-        expect(() => createTerm(2024, 0)).toThrow('Invalid month number');
+        expect(() => createTerm(2024, 'Autumn')).toThrow('Invalid term name');
+        expect(() => createTerm(2024, 'Unknown')).toThrow('Invalid term name');
+        expect(() => createTerm(2024, 3)).toThrow('Invalid month number');
+        expect(() => createTerm(2024, 4)).toThrow('Invalid month number');
     });
 });
 
