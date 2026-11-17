@@ -62,6 +62,8 @@ git tag v0.1.1
 git push origin v0.1.1
 ```
 
-## Copyright
+## Support
 
-Copyright © 2026 University of Illinois Board of Trustees
+This product is supported by the Graduate College, University of Illinois Urbana-Champaign on a best-effort basis.
+
+As of the last update to this README, support for this product will continue until at least 2027-12-31.
