@@ -64,4 +64,21 @@ describe('apiWatch', () => {
 
         expect(exec).toHaveBeenCalledWith('bar', 10);
     });
+
+    it('compares typed array arguments by their elements, not by their buffer offset', async () => {
+        const exec = vi.fn<(bytes: Uint8Array) => Promise<void>>().mockResolvedValue(undefined);
+        const bytes = ref(new Uint8Array([0, 1, 2]).subarray(1));
+
+        apiWatch(exec, () => [bytes.value]);
+        expect(exec).toHaveBeenCalledOnce();
+
+        bytes.value = new Uint8Array([1, 2]);
+        await nextTick();
+        expect(exec).toHaveBeenCalledOnce();
+
+        bytes.value = new Uint8Array([1, 3]);
+        await nextTick();
+        expect(exec).toHaveBeenCalledTimes(2);
+        expect(exec).toHaveBeenLastCalledWith(bytes.value);
+    });
 });
