@@ -42,8 +42,8 @@
         "vue": "^3.5.27"
     },
     "dependencies": {
-        "@vueuse/core": "^15.0.0",
-        "fast-equals": "^6.4.0",
-        "remeda": "^2.62.2"
+        "@vueuse/core": "^15.1.0",
+        "fast-equals": "^6.4.1",
+        "remeda": "^2.62.3"
     }
 }
